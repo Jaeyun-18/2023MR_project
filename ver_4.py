@@ -47,15 +47,27 @@ def calculate_E1(S1_F,S1_L,E1_F,W1_F,H1_F,E1_L,W1_L,H1_L,S2_F,shoulder_length): 
     E1_L_z = q*(E1_F[0]-S1_L[0]) #왼쪽 팔꿈치 z좌표
     W1_L_z = q*(W1_L[0]-S1_L[0]) #왼쪽 팔목 z좌표
 
+    X_Sh = p*(S2_F[0]-S1_F[0])
+    Y_Sh = 0.0
+    Z_Sh = 0.0
+    Shoulder_vec = np.array([X_Sh,Y_Sh,Z_Sh])
+
     X_Up = E1_F_x
     Y_Up = E1_F_y
     Z_Up = E1_L_z
-    upper_arm_vec = [X_Up,Y_Up,Z_Up]
+    Upper_arm_vec = np.array([X_Up,Y_Up,Z_Up])
 
     X_Low = W1_F_x - E1_F_x
     Y_Low = W1_F_y - E1_F_y
     Z_Low = W1_L_z - E1_L_z
-    Lower_arm_vec = [X_Low,Y_Low,Z_Low]
+    Lower_arm_vec = np.array([X_Low,Y_Low,Z_Low])
+
+    Elbow_angle_1 = np.arccos(np.dot(Upper_arm_vec,Lower_arm_vec)/(np.norm(Upper_arm_vec)*np.norm(Lower_arm_vec)))
+
+    Upper_cross_vec = np.cross(Shoulder_vec,Upper_arm_vec)/(np.norm(Shoulder_vec)*np.norm(Upper_arm_vec))
+    Lower_cross_vec = np.cross(Upper_arm_vec,Lower_arm_vec)/(np.norm(Upper_arm_vec)*np.norm(Lower_arm_vec))
+    
+    Elbow_angle_2 = np.arccos(np.dot(Upper_cross_vec,Lower_cross_vec)/(np.norm(Upper_cross_vec)*np.norm(Lower_cross_vec)))
 
 
 cap_F  = cv2.VideoCapture(1) #front
