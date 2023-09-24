@@ -17,9 +17,13 @@ while left.is_open():
 
     cv2.imshow('center image', cv2.flip(left_img, 1))
     cv2.imshow('left image', cv2.flip(front_img, 1))
-
+    diff_vector = np.array([[1, -1, 0, 0], [0, 1, -1, 0], [0, 0, 1, -1]])
     try:
-        print(left_points[1], front_points[1])
+        left_vectors = diff_vector @ left_points
+        front_left_vectors = diff_vector @ front_points[:4]
+        left_vectors = front_left_vectors[:, 1] / left_vectors[:, 1]
+
+        print("================")
     except:
         pass
     if cv2.waitKey(5) & 0xFF == 27:
