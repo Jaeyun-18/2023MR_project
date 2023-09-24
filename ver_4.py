@@ -34,8 +34,23 @@ def calculate_S1_front(H1_F, S1_F, E1_F, basic_length): #정면, 좌측 반원
         
     return angle_front, UP
 
-def calculate_E1(S1_F,E1_F,W1_F,S1_L,E1_L,W1_L): #아랫팔 벡터용 함수
-    pass
+def calculate_E1(S1_F,S1_L,E1_F,W1_F,H1_F,E1_L,W1_L,H1_L,S2_F,shoulder_length): #아랫팔 벡터용 함수
+    p = shoulder_length/(S1_F[0]-S2_F[0])
+    #FRONT cam
+    E1_F_x = p*(E1_F[0]-S1_F[0]) #왼쪽 팔꿈치 x자표
+    E1_F_y = p*(E1_F[1]-S1_F[1]) #왼쪽 팔꿈치 y좌표
+    W1_F_x = p*(W1_F[0]-S1_F[0]) #왼쪽 팔목 x좌표
+    W1_F_y = p*(W1_F[1]-S1_F[1]) #왼쪽 팔목 y좌표
+
+    #LEFT cam
+    q = (S1_F[1]-H1_F[1])/(S1_L[1]-H1_L[1])
+    E1_L_z = q*(E1_F[0]-S1_L[0]) #왼쪽 팔꿈치 z좌표
+    W1_L_z = q*(W1_L[0]-S1_L[0]) #왼쪽 팔목 z좌표
+
+    X = W1_F_x - E1_F_x
+    Y = W1_F_y - E1_F_y
+    Z = W1_L_z - E1_L_z
+    Lower_arm_vec = [X,Y,Z]
 
 
 cap_F  = cv2.VideoCapture(1) #front
