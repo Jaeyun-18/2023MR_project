@@ -34,7 +34,7 @@ def calculate_S1_front(H1_F, S1_F, E1_F, basic_length): #정면, 좌측 반원
         
     return angle_front, UP
 
-def calculate_E1(S1_F,S1_L,E1_F,W1_F,H1_F,E1_L,W1_L,H1_L,S2_F,shoulder_length): #아랫팔 벡터용 함수
+def calculate_Elbow_angle(S1_F,S1_L,E1_F,W1_F,H1_F,E1_L,W1_L,H1_L,S2_F,shoulder_length): #아랫팔 벡터용 함수
     p = shoulder_length/(S1_F[0]-S2_F[0])
     #FRONT cam
     E1_F_x = p*(E1_F[0]-S1_F[0]) #왼쪽 팔꿈치 x자표
@@ -66,8 +66,10 @@ def calculate_E1(S1_F,S1_L,E1_F,W1_F,H1_F,E1_L,W1_L,H1_L,S2_F,shoulder_length): 
 
     Upper_cross_vec = np.cross(Shoulder_vec,Upper_arm_vec)/(np.norm(Shoulder_vec)*np.norm(Upper_arm_vec))
     Lower_cross_vec = np.cross(Upper_arm_vec,Lower_arm_vec)/(np.norm(Upper_arm_vec)*np.norm(Lower_arm_vec))
-    
+
     Elbow_angle_2 = np.arccos(np.dot(Upper_cross_vec,Lower_cross_vec)/(np.norm(Upper_cross_vec)*np.norm(Lower_cross_vec)))
+
+    return Elbow_angle_1, Elbow_angle_2
 
 
 cap_F  = cv2.VideoCapture(1) #front
