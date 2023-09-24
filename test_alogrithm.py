@@ -21,8 +21,10 @@ while left.is_open():
     try:
         left_vectors = diff_vector @ left_points
         front_left_vectors = diff_vector @ front_points[:4]
-        left_vectors = front_left_vectors[:, 1] / left_vectors[:, 1]
-
+        left_vectors = (
+            (front_left_vectors[:, 1] / left_vectors[:, 1]) @ np.eye(3)) @ left_vectors
+        print(front_left_vectors)
+        print(left_vectors)
         print("================")
     except:
         pass
