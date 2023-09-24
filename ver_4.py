@@ -47,10 +47,15 @@ def calculate_E1(S1_F,S1_L,E1_F,W1_F,H1_F,E1_L,W1_L,H1_L,S2_F,shoulder_length): 
     E1_L_z = q*(E1_F[0]-S1_L[0]) #왼쪽 팔꿈치 z좌표
     W1_L_z = q*(W1_L[0]-S1_L[0]) #왼쪽 팔목 z좌표
 
-    X = W1_F_x - E1_F_x
-    Y = W1_F_y - E1_F_y
-    Z = W1_L_z - E1_L_z
-    Lower_arm_vec = [X,Y,Z]
+    X_Up = E1_F_x
+    Y_Up = E1_F_y
+    Z_Up = E1_L_z
+    upper_arm_vec = [X_Up,Y_Up,Z_Up]
+
+    X_Low = W1_F_x - E1_F_x
+    Y_Low = W1_F_y - E1_F_y
+    Z_Low = W1_L_z - E1_L_z
+    Lower_arm_vec = [X_Low,Y_Low,Z_Low]
 
 
 cap_F  = cv2.VideoCapture(1) #front
