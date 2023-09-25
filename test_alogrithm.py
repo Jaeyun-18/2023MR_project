@@ -15,9 +15,6 @@ while left.is_open():
     left_points, left_img = left.run_cycle(True)
     front_points, front_img = front.run_cycle(True)
 
-    cv2.imshow('center image', cv2.flip(left_img, 1))
-    cv2.imshow('left image', cv2.flip(front_img, 1))
-
     try:
         diff_vector = np.array([[1, -1, 0, 0], [0, 1, -1, 0], [0, 0, 1, -1]])
         left_vectors = diff_vector @ left_points
@@ -39,14 +36,32 @@ while left.is_open():
         # print(CL0)
         # print(CL1)
 
-        print(np.arcsin((np.linalg.norm(CL0) /
-              (np.linalg.norm(L0) * np.linalg.norm(L1)))) / np.pi * 180)
-        print(np.arcsin((np.linalg.norm(CL1) /
-              (np.linalg.norm(L1) * np.linalg.norm(L2)))) / np.pi * 180)
+        angle0 = np.arcsin(
+            (np.linalg.norm(CL0) / (np.linalg.norm(L0) * np.linalg.norm(L1)))) / np.pi * 180
+        angle1 = np.arcsin(
+            (np.linalg.norm(CL1) / (np.linalg.norm(L1) * np.linalg.norm(L2)))) / np.pi * 180
+
+        print(angle0)
+        print(angle1)
+
+        cv2.putText(left_img, str(round(angle0, 1)), tuple(np.multiply(left_points[1], [640, 480]).astype(
+            int)), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 2, cv2.LINE_AA)
+
+        cv2.putText(left_img, str(round(angle1, 1)), tuple(np.multiply(left_points[2], [640, 480]).astype(
+            int)), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 2, cv2.LINE_AA)
+
+        cv2.putText(front_img, str(round(angle0, 1)), tuple(np.multiply(front_points[1], [640, 480]).astype(
+            int)), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 2, cv2.LINE_AA)
+
+        cv2.putText(front_img, str(round(angle1, 1)), tuple(np.multiply(front_points[2], [640, 480]).astype(
+            int)), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 2, cv2.LINE_AA)
 
     except Exception as e:
         # print(e)
         pass
+
+    cv2.imshow('center image', cv2.flip(left_img, 1))
+    cv2.imshow('left image', cv2.flip(front_img, 1))
 
     if cv2.waitKey(5) & 0xFF == 27:
         break
