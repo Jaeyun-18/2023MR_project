@@ -7,8 +7,9 @@ front_landmarks = landmark_translate(
     True, ["H1", "S1", "E1", "W1", "H2", "S2", "E2", "W2"])
 
 left = PoseGetter(0, "left", left_landmarks)
-front = PoseGetter(
-    4, "center", front_landmarks)
+front = PoseGetter(4, "center", front_landmarks)
+
+font_size = 0.8
 
 
 while left.is_open():
@@ -43,18 +44,6 @@ while left.is_open():
 
         print(angle0)
         print(angle1)
-
-        cv2.putText(left_img, str(round(angle0, 1)), tuple(np.multiply(left_points[1], [640, 480]).astype(
-            int)), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 2, cv2.LINE_AA)
-
-        cv2.putText(left_img, str(round(angle1, 1)), tuple(np.multiply(left_points[2], [640, 480]).astype(
-            int)), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 2, cv2.LINE_AA)
-
-        cv2.putText(front_img, str(round(angle0, 1)), tuple(np.multiply(front_points[1], [640, 480]).astype(
-            int)), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 2, cv2.LINE_AA)
-
-        cv2.putText(front_img, str(round(angle1, 1)), tuple(np.multiply(front_points[2], [640, 480]).astype(
-            int)), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 2, cv2.LINE_AA)
 
     except Exception as e:
         # print(e)

@@ -13,21 +13,20 @@ class PoseGetter:
         self.mp_pose = mp.solutions.pose
         self.pose = self.mp_pose.Pose(
             min_detection_confidence=0.5, min_tracking_confidence=0.5)
-        self
 
     def is_open(self):
         return self.cap.isOpened()
 
     def run_cycle(self, show_vid):
-        success, image = self.cap.read()
+        success, self.image = self.cap.read()
         if not success:
             print("camera does not work")
             return None
 
-        image.flags.writeable = False
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        result = self.pose.process(image)
-        landmarks = result.pose_landmarks
+        self.image.flags.writeable = False
+        self.image = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
+        self.result = self.pose.process(self.image)
+        landmarks = self.result.pose_landmarks
 
         ret = []
         if landmarks != None:
@@ -36,16 +35,25 @@ class PoseGetter:
                 ret.append([lm.x, lm.y])
         ret = np.array(ret)
 
-        if show_vid:
-            image.flags.writeable = True
-            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-            self.mp_drawing.draw_landmarks(
-                image,
-                result.pose_landmarks,
-                self.mp_pose.POSE_CONNECTIONS,
-                landmark_drawing_spec=self.mp_drawing_styles.get_default_pose_landmarks_style())
+        return ret, self.image
 
-        return ret, image
+    def show_vid(self, write_angles: dict, font_size: float = 1.0, font_color: tuple = (0, 0, 0)):
+        self.image.flags.writeable = True
+        self.image = cv2.cvtColor(self.image, cv2.COLOR_RGB2BGR)
+        self.mp_drawing.draw_landmarks(
+            self.image,
+            self.result.pose_landmarks,
+            self.mp_pose.POSE_CONNECTIONS,
+            landmark_drawing_spec=self.mp_drawing_styles.get_default_pose_landmarks_style())
+
+        if write_angles != None:
+            for label, angle in write_angles.items():
+                point = self.result.pose_landmarks.landmark[landmark_translate(
+                    label)]
+                cv2.putText(self.image, str(round(angle, 1)), tuple(np.multiply(point, [640, 480]).astype(
+                    int)), cv2.FONT_HERSHEY_SIMPLEX, font_size, font_color, 2, cv2.LINE_AA)
+
+        return cv2.imshow(self.name, self.image)
 
 
 def landmark_translate(str_to_num, landmarks):
