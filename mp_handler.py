@@ -4,7 +4,7 @@ import numpy as np
 
 
 class PoseGetter:
-    def __init__(self, camera_num, name, wanted_points):
+    def __init__(self, camera_num: int, name: str, wanted_points: list):
         self.cap = cv2.VideoCapture(camera_num)
         self.name = name
         self.wanted_points = wanted_points
@@ -17,7 +17,7 @@ class PoseGetter:
     def is_open(self):
         return self.cap.isOpened()
 
-    def run_cycle(self, show_vid):
+    def run_cycle(self):
         success, self.image = self.cap.read()
         if not success:
             print("camera does not work")
@@ -49,8 +49,8 @@ class PoseGetter:
         if write_angles != None:
             for label, angle in write_angles.items():
                 point = self.result.pose_landmarks.landmark[landmark_translate(
-                    label)]
-                cv2.putText(self.image, str(round(angle, 1)), tuple(np.multiply(point, [640, 480]).astype(
+                    True, [label])[0]]
+                cv2.putText(self.image, str(round(angle, 1)), tuple(np.multiply([point.x, point.y], [640, 480]).astype(
                     int)), cv2.FONT_HERSHEY_SIMPLEX, font_size, font_color, 2, cv2.LINE_AA)
 
         return cv2.imshow(self.name, self.image)
