@@ -47,6 +47,7 @@ class PoseGetter:
             landmark_drawing_spec=self.mp_drawing_styles.get_default_pose_landmarks_style())
 
         self.image = cv2.flip(self.image, 1)
+
         if write_angles != None:
             for label, angle in write_angles.items():
                 point = self.result.pose_landmarks.landmark[landmark_translate(
