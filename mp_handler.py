@@ -1,10 +1,11 @@
+from __future__ import annotations
 import cv2
 import mediapipe as mp
 import numpy as np
 
 
 class PoseGetter:
-    def __init__(self, camera_num: int, name: str, wanted_points: list):
+    def __init__(self, camera_num: int, name: str, wanted_points: list) -> None:
         self.cap = cv2.VideoCapture(camera_num)
         self.name = name
         self.wanted_points = wanted_points
@@ -14,10 +15,10 @@ class PoseGetter:
         self.pose = self.mp_pose.Pose(
             min_detection_confidence=0.5, min_tracking_confidence=0.5)
 
-    def is_open(self):
+    def is_open(self) -> bool:
         return self.cap.isOpened()
 
-    def run_cycle(self):
+    def run_cycle(self) -> tuple[np.ndarray, cv2.Mat]:
         success, self.image = self.cap.read()
         if not success:
             print("camera does not work")
@@ -37,7 +38,7 @@ class PoseGetter:
 
         return ret, self.image
 
-    def show_vid(self, write_angles: dict, font_size: float = 1.0, font_color: tuple = (0, 0, 0)):
+    def show_vid(self, write_angles: dict[str:float], font_size: float = 1.0, font_color: tuple[int, int, int] = (0, 0, 0)) -> None:
         self.image.flags.writeable = True
         self.image = cv2.cvtColor(self.image, cv2.COLOR_RGB2BGR)
         self.mp_drawing.draw_landmarks(
@@ -59,7 +60,7 @@ class PoseGetter:
         return
 
 
-def landmark_translate(str_to_num, landmarks):
+def landmark_translate(str_to_num: bool, landmarks: list) -> list:
     landmark_dict = {
         "S1": 11, "S2": 12, "E1": 13, "E2": 14,
         "W1": 15, "W2": 16, "H1": 23, "H2": 24
