@@ -15,7 +15,6 @@ font_size = 0.8
 while front.is_open():
     # left_points, left_img = left.run_cycle(True)
     front_points, front_img = front.run_cycle()
-    front.show_vid({"S1": 90, "E1": 100})
 
     try:
         diff_vector = np.array([[1, -1, 0, 0], [0, 1, -1, 0], [0, 0, 1, -1]])
@@ -46,7 +45,7 @@ while front.is_open():
         print(angle0)
         print(angle1)"""
 
-        # front.show_vid()
+        front.show_vid({"S1": 90, "E1": 100})
 
     except Exception as e:
         # print(e)

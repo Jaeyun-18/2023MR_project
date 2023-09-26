@@ -46,14 +46,17 @@ class PoseGetter:
             self.mp_pose.POSE_CONNECTIONS,
             landmark_drawing_spec=self.mp_drawing_styles.get_default_pose_landmarks_style())
 
+        self.image = cv2.flip(self.image, 1)
         if write_angles != None:
             for label, angle in write_angles.items():
                 point = self.result.pose_landmarks.landmark[landmark_translate(
                     True, [label])[0]]
-                cv2.putText(self.image, str(round(angle, 1)), tuple(np.multiply([point.x, point.y], [640, 480]).astype(
+                print(1 - point.x, point.y)
+                cv2.putText(self.image, str(round(angle, 1)), tuple(np.multiply([1 - point.x, point.y], [640, 480]).astype(
                     int)), cv2.FONT_HERSHEY_SIMPLEX, font_size, font_color, 2, cv2.LINE_AA)
 
-        return cv2.imshow(self.name, self.image)
+        cv2.imshow(self.name, self.image)
+        return
 
 
 def landmark_translate(str_to_num, landmarks):
