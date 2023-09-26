@@ -51,7 +51,6 @@ class PoseGetter:
             for label, angle in write_angles.items():
                 point = self.result.pose_landmarks.landmark[landmark_translate(
                     True, [label])[0]]
-                print(1 - point.x, point.y)
                 cv2.putText(self.image, str(round(angle, 1)), tuple(np.multiply([1 - point.x, point.y], [640, 480]).astype(
                     int)), cv2.FONT_HERSHEY_SIMPLEX, font_size, font_color, 2, cv2.LINE_AA)
 
