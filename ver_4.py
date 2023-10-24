@@ -62,12 +62,17 @@ def calculate_Elbow_angle(S1_F,S1_L,E1_F,W1_F,H1_F,E1_L,W1_L,H1_L,S2_F,shoulder_
     Z_Low = W1_L_z - E1_L_z
     Lower_arm_vec = np.array([X_Low,Y_Low,Z_Low])
 
-    Elbow_angle_1 = np.arccos(np.dot(Upper_arm_vec,Lower_arm_vec)/(np.norm(Upper_arm_vec)*np.norm(Lower_arm_vec)))
+    Elbow_angle_1_semi = np.arccos(np.dot(Upper_arm_vec,Lower_arm_vec)/(np.linalg.norm(Upper_arm_vec)*np.linalg.norm(Lower_arm_vec)))
+    Elbow_angle_1 = 180.0-(Elbow_angle_1_semi/np.pi)*180.0
 
-    Upper_cross_vec = np.cross(Shoulder_vec,Upper_arm_vec)/(np.norm(Shoulder_vec)*np.norm(Upper_arm_vec))
-    Lower_cross_vec = np.cross(Upper_arm_vec,Lower_arm_vec)/(np.norm(Upper_arm_vec)*np.norm(Lower_arm_vec))
+    Upper_cross_vec = np.cross(Shoulder_vec,Upper_arm_vec)/(np.linalg.norm(Shoulder_vec)*np.linalg.norm(Upper_arm_vec))
+    Lower_cross_vec = np.cross(Upper_arm_vec,Lower_arm_vec)/(np.linalg.norm(Upper_arm_vec)*np.linalg.norm(Lower_arm_vec))
 
-    Elbow_angle_2 = np.arccos(np.dot(Upper_cross_vec,Lower_cross_vec)/(np.norm(Upper_cross_vec)*np.norm(Lower_cross_vec)))
+    Elbow_angle_2_semi = np.arccos(np.dot(Upper_cross_vec,Lower_cross_vec)/(np.linalg.norm(Upper_cross_vec)*np.linalg.norm(Lower_cross_vec)))
+    Elbow_angle_2 = (Elbow_angle_2_semi/np.pi)*180.0
+
+    print(Elbow_angle_1)
+    print(Elbow_angle_2)
 
     return Elbow_angle_1, Elbow_angle_2
 
@@ -142,22 +147,26 @@ with mp_pose.Pose(min_detection_confidence = 0.5, min_tracking_confidence = 0.5)
             shoulder_length = abs(S1_F[0]-S2_F[0])
             Elbow_angle_1, Elbow_angle_2 = calculate_Elbow_angle(S1_F,S1_L,E1_F,W1_F,H1_F,E1_L,W1_L,H1_L,S2_F,shoulder_length)
             
+            shoulder_length = abs(S1_F[0]-S2_F[0])
+            Elbow_angle_1, Elbow_angle_2 = calculate_Elbow_angle(S1_F,S1_L,E1_F,W1_F,H1_F,E1_L,W1_L,H1_L,S2_F,shoulder_length)
+
             #Visualize angle on frame_F
-            cv2.putText(image_F, str(angle_front_L)+" "+str(UP),
+            cv2.putText(image_F, str(Elbow_angle_1)+" "+str(Elbow_angle_2),
                         tuple(np.multiply(S1_F, [640, 480]).astype(int)),
                         cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2, cv2.LINE_AA
                        ) 
             
-            cv2.putText(image_L, str(angle_side_L),
-                           tuple(np.multiply(S1_L, [640, 480]).astype(int)),
-                           cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2, cv2.LINE_AA
-                       ) 
+            # cv2.putText(image_L, str(angle_side_L),
+            #                tuple(np.multiply(S1_L, [640, 480]).astype(int)),
+            #                cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2, cv2.LINE_AA
+            #            ) 
+            
         
-        except:
-            pass
+        except Exception as e:
+            print(e)
         
         # Render detections
-        mp_drawing.draw_landmark_F(image_F, result_F.pose_landmark_F, mp_pose.POSE_CONNECTIONS,
+        mp_drawing.draw_landmarks(image_F, result_F.pose_landmarks, mp_pose.POSE_CONNECTIONS,
                                  mp_drawing.DrawingSpec(color=(245,117,66), thickness=2, circle_radius=2),
                                  # joint 크기 및 색깔 설정
                                  mp_drawing.DrawingSpec(color=(245,66,230), thickness=2, circle_radius=2)
@@ -165,7 +174,7 @@ with mp_pose.Pose(min_detection_confidence = 0.5, min_tracking_confidence = 0.5)
                                  )
         
 
-        mp_drawing.draw_landmark_L(image_L, result_L.pose_landmark_F, mp_pose.POSE_CONNECTIONS,
+        mp_drawing.draw_landmarks(image_L, result_L.pose_landmarks, mp_pose.POSE_CONNECTIONS,
                                  mp_drawing.DrawingSpec(color=(245,117,66), thickness=2, circle_radius=2),
                                  # joint 크기 및 색깔 설정
                                  mp_drawing.DrawingSpec(color=(245,66,230), thickness=2, circle_radius=2)
