@@ -10,11 +10,11 @@ left = PoseGetter(3, "left", left_landmarks)
 front = PoseGetter(0, "front", front_landmarks)
 
 
-while left.is_open():
+while front.is_open():
     left_points, left_img = left.run_cycle(True)
     front_points, front_img = front.run_cycle(True)
 
-    #marking
+    # marking
     S1_F = front_points[0]
     S2_F = front_points[1]
     E1_F = front_points[2]
@@ -29,11 +29,11 @@ while left.is_open():
     E1_L = left_points[2]
     W1_L = left_points[3]
 
-    cv2.imshow('left image', cv2.flip(left_img, 1))
+    front.show_vid(None)
     cv2.imshow('front image', cv2.flip(front_img, 1))
 
     try:
-        print(left_points[1], front_points[1])
+        print(front_points[1])
     except:
         pass
 
