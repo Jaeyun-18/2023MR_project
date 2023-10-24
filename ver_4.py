@@ -129,6 +129,7 @@ with mp_pose.Pose(min_detection_confidence = 0.5, min_tracking_confidence = 0.5)
             S2_L = [landmark_L[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,landmark_L[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
             E1_L = [landmark_L[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,landmark_L[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
             W1_L = [landmark_L[mp_pose.PoseLandmark.LEFT_WRIST.value].x,landmark_L[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
+            H1_L = [landmark_L[mp_pose.PoseLandmark.LEFT_HIP.value].x,landmark_L[mp_pose.PoseLandmark.LEFT_HIP.value].y]
             
             # S2_R = [landmark_R[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,landmark_R[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
             # S1_R = [landmark_R[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,landmark_R[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
@@ -138,7 +139,8 @@ with mp_pose.Pose(min_detection_confidence = 0.5, min_tracking_confidence = 0.5)
             # Calculate angle
             angle_front_L, UP = calculate_S1_front(H1_F, S1_F, E1_F, 0.2)  
             angle_side_L = calculate_S1_side(S1_L, E1_L)
-            angle_frontside_L_2 = calculate_E1(S1_F,E1_F,W1_F,S1_L,E1_L,W1_L) #아랫팔 벡터 구할 때 사용.
+            shoulder_length = abs(S1_F[0]-S2_F[0])
+            Elbow_angle_1, Elbow_angle_2 = calculate_Elbow_angle(S1_F,S1_L,E1_F,W1_F,H1_F,E1_L,W1_L,H1_L,S2_F,shoulder_length)
             
             #Visualize angle on frame_F
             cv2.putText(image_F, str(angle_front_L)+" "+str(UP),
