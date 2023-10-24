@@ -40,10 +40,8 @@ while front.is_open():
     except:
         pass
 
-    front.show_vid(None)
-    left.show_vid(None)
     cv2.imshow('front image', cv2.flip(front_img, 1))
-    cv2.imshow('left image', cv2.flip(left_img, 2))
+    cv2.imshow('left image', cv2.flip(left_img, 1))
 
     if cv2.waitKey(5) & 0xFF == 27:
         break
