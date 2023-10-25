@@ -1,37 +1,5 @@
 import numpy as np
 
-"""
-def calculate_S1_side(S1_L, E1_L): #좌측면, 원
-    S1_L = np.array(S1_L) #left shoulder / sidecame
-    E1_L = np.array(E1_L) #left elbow / sidecame
-
-    radian = np.arctan(np.abs(S1_L[1]-E1_L[1]) / np.abs(S1_L[0]-E1_L[0]))
-    angle_L = np.abs(radian)*180.0/np.pi
-    
-    if E1_L[0] > S1_L[0]:
-        return angle_L - 90.0
-    else:   
-        return 90.0 - angle_L
-    
-def calculate_S1_front(H1_F, S1_F, E1_F, basic_length): #정면, 좌측 반원
-    H1_F = np.array(H1_F) # First
-    S1_F = np.array(S1_F) # Mid
-    E1_F = np.array(E1_F) # End
-
-    x_arm_1 = np.abs(E1_F[0]-S1_F[0]) # x축에 내린 윗팔의 정사영 길이
-    angle_front = 90.0 - np.abs(np.arccos(x_arm_1/basic_length)*180.0/np.pi)
-    
-    y_S1 = S1_F[1]
-    UP = 0 #위, 아래 판단 bool 변수
-
-    if E1_F[1] < y_S1:
-        UP = 1
-    elif E1_F[1] >= y_S1:
-        UP = 0
-        
-    return angle_front, UP
-"""
-
 def calculate_Shoulder_angle(S1_F, S2_F, E1_F, S1_L, E1_L):
     #Shoulder vector
     vec_x = S1_F[0]-S2_F[0]
@@ -48,13 +16,21 @@ def calculate_Shoulder_angle(S1_F, S2_F, E1_F, S1_L, E1_L):
 
     #첫번째 각도
     Shoulder_angle_1_semi = np.arccos(np.dot(Upper_arm_vec,Shoulder_vec)/(np.linalg.norm(Upper_arm_vec)*np.linalg.norm(Shoulder_vec)))
-    Shoulder_angle_1 = 180.0-(Shoulder_angle_1_semi/np.pi)*180.0
+    Shoulder_angle_1 = (Shoulder_angle_1_semi/np.pi)*180.0-90.0
 
     #두번째 각도 / 정면으로 뻗은걸 0도로 기준
-    base_vec = np.array([1.0, 0.0])
+    base_vec = np.array([0.0, -1.0])
     arm_vec = np.array([Elbow_z, Elbow_y])
     Shoulder_angle_2_semi = np.arccos(np.dot(base_vec,arm_vec)/np.linalg.norm(arm_vec))
-    Shoulder_angle_2 = 180.0-(Shoulder_angle_2_semi/np.pi)*180.0
+
+    Sign = 1.0
+
+    if Elbow_z > Shoulder_z:
+        Sign = +1.0  
+    else:   
+        Sign = -1.0
+
+    Shoulder_angle_2 = Sign*(Shoulder_angle_2_semi/np.pi)*180.0
 
     return Shoulder_angle_1, Shoulder_angle_2
 
