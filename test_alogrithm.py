@@ -1,7 +1,7 @@
-from __future__ import annotations
 import cv2
 from mp_handler import *
 import numpy as np
+from typing import Tuple
 
 # test algorithm for left-front-right 90 degree camera arrangement
 
@@ -34,7 +34,7 @@ def test_algorithm2(left_points: np.ndarray, right_points: np.ndarray) -> np.nda
     return np.hstack((x_vectors, y_vectors, z_vectors))
 
 
-def vectors_to_angles(final_vector: np.ndarray) -> tuple[float, float]:
+def vectors_to_angles(final_vector: np.ndarray) -> Tuple[float, float]:
     L0 = final_vector[:, 0]
     L1 = final_vector[:, 1]
     L2 = final_vector[:, 2]
