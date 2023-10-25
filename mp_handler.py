@@ -1,8 +1,7 @@
-from __future__ import annotations
 import cv2
 import mediapipe as mp
 import numpy as np
-
+from typing import Tuple, Dict
 
 class PoseGetter:
     def __init__(self, camera_num: int, name: str, wanted_points: list) -> None:
@@ -18,7 +17,7 @@ class PoseGetter:
     def is_open(self) -> bool:
         return self.cap.isOpened()
 
-    def run_cycle(self) -> tuple[np.ndarray, cv2.Mat]:
+    def run_cycle(self) -> Tuple[np.ndarray, cv2.Mat]:
         success, self.image = self.cap.read()
         if not success:
             print("camera does not work")
@@ -38,7 +37,7 @@ class PoseGetter:
 
         return ret, self.image
 
-    def show_vid(self, write_angles: dict[str:float], font_size: float = 1.0, font_color: tuple[int, int, int] = (0, 0, 0)) -> None:
+    def show_vid(self, write_angles: Dict[str:float], font_size: float = 1.0, font_color: Tuple[int, int, int] = (0, 0, 0)) -> None:
         self.image.flags.writeable = True
         self.image = cv2.cvtColor(self.image, cv2.COLOR_RGB2BGR)
         self.mp_drawing.draw_landmarks(
