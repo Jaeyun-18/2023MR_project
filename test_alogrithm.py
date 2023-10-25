@@ -47,31 +47,33 @@ def vectors_to_angles(final_vector: np.ndarray) -> tuple[float, float]:
     return angle0, angle1
 
 
-left_landmarks = landmark_translate(True, ["H1", "S1", "E1", "W1"])
+# left_landmarks = landmark_translate(True, ["H1", "S1", "E1", "W1"])
 front_landmarks = landmark_translate(
     True, ["H1", "S1", "E1", "W1", "H2", "S2", "E2", "W2"])
 
-left = PoseGetter(4, "left", left_landmarks)
+# left = PoseGetter(4, "left", left_landmarks)
 front = PoseGetter(0, "center", front_landmarks)
 
 font_size = 0.8
 
 
 while front.is_open():
-    left_points, left_img = left.run_cycle()
+    # left_points, left_img = left.run_cycle()
     front_points, front_img = front.run_cycle()
 
     try:
-        f1 = test_algorithm1(left_points, front_points[:4])
-        f2 = test_algorithm2(left_points, front_points[:4])
+        # f1 = test_algorithm1(left_points, front_points[:4])
+        # f2 = test_algorithm2(left_points, front_points[:4])
 
-        angle0, angle1 = vectors_to_angles(f1)
+        # angle0, angle1 = vectors_to_angles(f1)
+        # angle0, angle1 = vectors_to_angles(f2)
 
-        print(angle0)
-        print(angle1)
+        # print("f1", angle0, angle1)
+        # print("f2", angle0, angle1)
 
-        front.show_vid({"S1": angle0, "E1": angle1})
-        left.show_vid({"S1": angle0, "E1": angle1})
+        # front.show_vid({"S1": angle0, "E1": angle1})
+        # left.show_vid({"S1": angle0, "E1": angle1})
+        front.show_vid(None)
 
     except Exception as e:
         print(e)
