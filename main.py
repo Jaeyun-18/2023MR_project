@@ -32,8 +32,7 @@ while front.is_open():
         W1_L = left_points[3]
         H1_L = left_points[4]
 
-        angle_front_L, UP = calculate_S1_front(H1_F, S1_F, E1_F, 0.2)  
-        angle_side_L = calculate_S1_side(S1_L, E1_L)
+        Shoudler_angle_1, Shoulder_angle_2 = calculate_Shoulder_angle(S1_F, S2_F, E1_F, S1_L, E1_L)
         shoulder_length = abs(S1_F[0]-S2_F[0])
         Elbow_angle_1, Elbow_angle_2 = calculate_Elbow_angle(S1_F,S1_L,E1_F,W1_F,H1_F,E1_L,W1_L,H1_L,S2_F,shoulder_length)
     
