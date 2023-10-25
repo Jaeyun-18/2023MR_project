@@ -3,8 +3,9 @@ import mediapipe as mp
 import numpy as np
 from typing import Tuple, Dict
 
+
 class PoseGetter:
-    def __init__(self, camera_num: int, name: str, wanted_points: list) -> None:
+    def __init__(self, camera_num: int, name: str, wanted_points: list, img_size: Tuple[int, int]) -> None:
         self.cap = cv2.VideoCapture(camera_num)
         self.name = name
         self.wanted_points = wanted_points
@@ -13,6 +14,7 @@ class PoseGetter:
         self.mp_pose = mp.solutions.pose
         self.pose = self.mp_pose.Pose(
             min_detection_confidence=0.5, min_tracking_confidence=0.5)
+        self.img_size = np.array(img_size)
 
     def is_open(self) -> bool:
         return self.cap.isOpened()
@@ -34,10 +36,11 @@ class PoseGetter:
                 lm = landmarks.landmark[k]
                 ret.append([lm.x, lm.y])
         ret = np.array(ret)
+        ret = self.img_size * ret
 
         return ret, self.image
 
-    def show_vid(self, write_angles: Dict[str:float], font_size: float = 1.0, font_color: Tuple[int, int, int] = (0, 0, 0)) -> None:
+    def show_vid(self, write_angles: Dict[str, float], font_size: float = 1.0, font_color: Tuple[int, int, int] = (0, 0, 0)) -> None:
         self.image.flags.writeable = True
         self.image = cv2.cvtColor(self.image, cv2.COLOR_RGB2BGR)
         self.mp_drawing.draw_landmarks(

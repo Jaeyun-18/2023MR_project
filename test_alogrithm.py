@@ -52,7 +52,7 @@ front_landmarks = landmark_translate(
     True, ["H1", "S1", "E1", "W1", "H2", "S2", "E2", "W2"])
 
 # left = PoseGetter(4, "left", left_landmarks)
-front = PoseGetter(0, "center", front_landmarks)
+front = PoseGetter(0, "center", front_landmarks, [640, 480])
 
 font_size = 0.8
 
@@ -74,6 +74,7 @@ while front.is_open():
         # front.show_vid({"S1": angle0, "E1": angle1})
         # left.show_vid({"S1": angle0, "E1": angle1})
         front.show_vid(None)
+        print(front_points[6])
 
     except Exception as e:
         print(e)
