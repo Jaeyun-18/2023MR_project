@@ -3,7 +3,6 @@ import mediapipe as mp
 import numpy as np
 from typing import Tuple, Dict
 
-
 class PoseGetter:
     def __init__(self, camera_num: int, name: str, wanted_points: list, img_size: Tuple[int, int]) -> None:
         self.cap = cv2.VideoCapture(camera_num)
