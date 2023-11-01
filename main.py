@@ -11,7 +11,7 @@ left_landmarks = landmark_translate(True, ["S1", "S2", "E1", "W1", "H1"])
 left = PoseGetter(1, "left", left_landmarks, [200,200])
 front = PoseGetter(0, "front", front_landmarks, [200,200])
 #right = PoseGetter(2, "right", right_landmarks)
-shoulder_length = float(input('INPUT SHOULDER_LENGTH : '))
+#shoulder_length = float(input('INPUT SHOULDER_LENGTH : '))
 
 while front.is_open():
     try:
@@ -47,6 +47,7 @@ while front.is_open():
         
         left.show_vid(None)
         front.show_vid(None)
+        print(Shoudler_angle_1, Shoulder_angle_2)
         #right.show_vid(None)
     
     except:
