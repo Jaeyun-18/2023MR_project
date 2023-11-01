@@ -35,11 +35,11 @@ while front.is_open():
         W1_L = left_points[3]
         H1_L = left_points[4]
 
-#        S1_R = left_points[0]
-#        S2_R = left_points[1]
-#        E2_R = left_points[2]
-#        W2_R = left_points[3]
-#        H2_R = left_points[4]
+        #S1_R = left_points[0]
+        #S2_R = left_points[1]
+        #E2_R = left_points[2]
+        #W2_R = left_points[3]
+        #H2_R = left_points[4]
 
         Shoudler_angle_1, Shoulder_angle_2 = calculate_Left_Shoulder_angle(S1_F, S2_F, E1_F, S1_L, E1_L, S2_L)
         shoulder_length = abs(S1_F[0]-S2_F[0])
@@ -47,7 +47,7 @@ while front.is_open():
         
         left.show_vid(None)
         front.show_vid(None)
-#        right.show_vid(None)
+        #right.show_vid(None)
     
     except:
         pass
