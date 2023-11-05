@@ -47,21 +47,21 @@ def vectors_to_angles(final_vector: np.ndarray) -> Tuple[float, float]:
     return angle0, angle1
 
 
-# left_landmarks = landmark_translate(True, ["H1", "S1", "E1", "W1"])
+left_landmarks = landmark_translate(True, ["H1", "S1", "E1", "W1"])
 front_landmarks = landmark_translate(
     True, ["H1", "S1", "E1", "W1", "H2", "S2", "E2", "W2"])
 
-# left = PoseGetter(4, "left", left_landmarks)
-front = PoseGetter(0, "center", front_landmarks, [640, 480])
+left = PoseGetter(4, "left", left_landmarks, [640, 480])
+front = PoseGetter(6, "center", front_landmarks, [640, 480])
 
 font_size = 0.8
 
 
 while front.is_open():
-    # left_points, left_img = left.run_cycle()
-    front_points, front_img = front.run_cycle()
-
     try:
+        left_points, left_img = left.run_cycle()
+        front_points, front_img = front.run_cycle()
+
         # f1 = test_algorithm1(left_points, front_points[:4])
         # f2 = test_algorithm2(left_points, front_points[:4])
 
@@ -73,6 +73,7 @@ while front.is_open():
 
         # front.show_vid({"S1": angle0, "E1": angle1})
         # left.show_vid({"S1": angle0, "E1": angle1})
+        left.show_vid(None)
         front.show_vid(None)
         print(front_points[6])
 

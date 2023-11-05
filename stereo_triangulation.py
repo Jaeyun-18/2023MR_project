@@ -3,7 +3,7 @@ import glob
 import numpy as np
 import matplotlib.pyplot as plt
 
-ROWS = 7
+ROWS = 6
 COLUMNS = 9
 
 

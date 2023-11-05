@@ -3,6 +3,7 @@ import mediapipe as mp
 import numpy as np
 from typing import Tuple, Dict
 
+
 class PoseGetter:
     def __init__(self, camera_num: int, name: str, wanted_points: list, img_size: Tuple[int, int]) -> None:
         self.cap = cv2.VideoCapture(camera_num)
@@ -21,7 +22,7 @@ class PoseGetter:
     def run_cycle(self) -> Tuple[np.ndarray, cv2.Mat]:
         success, self.image = self.cap.read()
         if not success:
-            print("camera does not work")
+            print("camera {} does not work".format(self.name))
             return None
 
         self.image.flags.writeable = False

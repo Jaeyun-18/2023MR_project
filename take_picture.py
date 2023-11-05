@@ -9,6 +9,7 @@ class Cameras:
         self.cam_info = cam_info
         for id, name in cam_info.items():
             self.caps[name] = cv2.VideoCapture(id)
+        print(self.caps)
         self.directory = directory
 
     def run(self):
@@ -20,8 +21,8 @@ class Cameras:
                 for id, name in self.cam_info.items():
                     success, image = self.caps[name].read()
                     if not success:
-                        print("camera does not work")
-                        return None
+                        # print("camera {} does not work".format(id))
+                        pass
 
                     image.flags.writeable = False
                     self.images[name] = (cv2.flip(image, 1))
@@ -29,7 +30,8 @@ class Cameras:
                     cv2.imshow(name, self.images[name])
                     cv2.waitKey(1)
             except Exception as e:
-                print(e)
+                # print(e)
+                pass
 
     def capture(self):
         capture_num = 0
@@ -47,7 +49,10 @@ class Cameras:
 
 
 if __name__ == "__main__":
-    test_cam = Cameras({5: 'left_camera', 4: 'right_camera'},
+
+    # left_cam = Cameras({4: 'left_camera'}, "cali_imgs/left_imgs/")
+    # right_cam = Cameras({6: 'right_camera'}, "cali_imgs/right_imgs/")
+    both_cam = Cameras({4: 'right_camera', 6: 'left_camera'},
                        "cali_imgs/sync_imgs/")
 
-    test_cam.run()
+    both_cam.run()
