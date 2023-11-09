@@ -8,28 +8,39 @@ COLUMNS = 9
 
 
 class StereoCameraSystem:
-    def __init__(self, right_dir: str, left_dir: str, sync_dir: str, checkerborad_size: Tuple[int, int]):
+    def __init__(self, img1_name: str, img2_name: str, img1_dir: str, img2_dir: str, sync_dir: str, checkerborad_size: Tuple[int, int]):
         self.COLUMNS, self.ROWS = checkerborad_size
-        self.left_dir = left_dir
-        self.right_dir = right_dir
+        self.img1_name = img1_name
+        self.img2_name = img2_name
+        self.img1_dir = img1_dir
+        self.img2_dir = img2_dir
         self.sync_dir = sync_dir
 
-    def calibrate(self, save_dir: str, load_dir: str):
-        self.mtxr, distr = self.__calibrate_single_camera(self.right_dir)
-        self.mtxl, distl = self.__calibrate_single_camera(self.left_dir)
-        self.R, self.T = self.__stereo_calibrate(
-            self.mtxr, distr, self.mtxl, distl, self.sync_dir)
-
-        if load_dir != None:
-            l = np.load(load_dir)
+    def calibrate(self, load: bool, dir: str):
+        if load == True:
+            l = np.load(dir)
             self.R = l['R']
             self.T = l['T']
+            self.mtx1 = l[self.img1_name]
+            self.mtx2 = l[self.img2_name]
+            return
 
-        if save_dir != None:
-            np.savez(save_dir, R=self.R, T=self.T)
+        self.mtx1, dist1 = self.__calibrate_single_camera(self.img1_dir)
+        self.mtx2, dist2 = self.__calibrate_single_camera(self.img2_dir)
+        cv.destroyAllWindows()
+
+        self.R, self.T = self.__stereo_calibrate(
+            self.mtx1, dist1, self.mtx2, dist2, self.sync_dir)
+
+        vals_to_save = {'R': self.R, 'T': self.T,
+                        self.img1_name: self.mtx1, self.img2_name: self.mtx2}
+
+        np.savez(dir, **vals_to_save)
+
+        cv.destroyAllWindows()
 
     def __calibrate_single_camera(self, images_folder):
-        images_names = glob.glob(images_folder)
+        images_names = glob.glob(images_folder + "/*")
         images = []
         for imname in images_names:
             im = cv.imread(imname, 1)
@@ -74,7 +85,7 @@ class StereoCameraSystem:
                 cv.drawChessboardCorners(
                     frame, (self.ROWS, self.COLUMNS), corners, ret)
                 cv.imshow('img', frame)
-                cv.waitKey(500)
+                cv.waitKey(100)
 
                 objpoints.append(objp)
                 imgpoints.append(corners)
@@ -91,13 +102,14 @@ class StereoCameraSystem:
 
     def __stereo_calibrate(self, mtx1, dist1, mtx2, dist2, frames_folder):
         # read the synched frames
-        images_names = glob.glob(frames_folder)
-        images_names = sorted(images_names)
-
-        c1_images_names = images_names[:len(images_names)//2]
-        c2_images_names = images_names[len(images_names)//2:]
+        c1_images_names = sorted(
+            glob.glob(frames_folder + "/" + self.img1_name + "*"))
+        c2_images_names = sorted(
+            glob.glob(frames_folder + "/" + self.img2_name + "*"))
 
         print(c1_images_names)
+        print(c2_images_names)
+
         c1_images = []
         c2_images = []
         for im1, im2 in zip(c1_images_names, c2_images_names):
@@ -136,9 +148,6 @@ class StereoCameraSystem:
             c_ret1, corners1 = cv.findChessboardCorners(gray1, size, None)
             c_ret2, corners2 = cv.findChessboardCorners(gray2, size, None)
 
-            print(len(corners1))
-            print(len(corners2))
-
             if c_ret1 == True and c_ret2 == True:
                 corners1 = cv.cornerSubPix(
                     gray1, corners1, (11, 11), (-1, -1), criteria)
@@ -146,11 +155,21 @@ class StereoCameraSystem:
                     gray2, corners2, (11, 11), (-1, -1), criteria)
 
                 cv.drawChessboardCorners(frame1, size, corners1, c_ret1)
-                cv.imshow('left', frame1)
+                cv.imshow(self.img1_name, frame1)
 
                 cv.drawChessboardCorners(frame2, size, corners2, c_ret2)
-                cv.imshow('right', frame2)
-                cv.waitKey(500)
+                cv.imshow(self.img2_name, frame2)
+
+                if cv.waitKey(5000) == ord('f'):
+                    corners1 = np.flip(corners1, axis=0)
+                    cv.drawChessboardCorners(frame1, size, corners1, c_ret1)
+                    cv.imshow(self.img1_name, frame1)
+
+                    cv.drawChessboardCorners(frame2, size, corners2, c_ret2)
+                    cv.imshow(self.img2_name, frame2)
+
+                if cv.waitKey(500) == ord('n'):
+                    pass
 
                 objpoints.append(objp)
                 imgpoints_left.append(corners1)
@@ -163,14 +182,14 @@ class StereoCameraSystem:
         print(ret)
         return R, T
 
-    def triangulate(self, right_points, left_points):
+    def triangulate(self, img1_points, img2_points):
         # RT matrix for C1 is identity.
         RT1 = np.concatenate([np.eye(3), [[0], [0], [0]]], axis=-1)
-        P1 = self.mtxr @ RT1  # projection matrix for C1
+        P1 = self.mtx1 @ RT1  # projection matrix for C1
 
         # RT matrix for C2 is the R and T obtained from stereo calibration.
         RT2 = np.concatenate([self.R, self.T], axis=-1)
-        P2 = self.mtxl @ RT2  # projection matrix for C2
+        P2 = self.mtx2 @ RT2  # projection matrix for C2
 
         def DLT(P1, P2, point1, point2):
 
@@ -186,15 +205,18 @@ class StereoCameraSystem:
             B = A.transpose() @ A
             from scipy import linalg
             U, s, Vh = linalg.svd(B, full_matrices=False)
-
-            print('Triangulated point: ')
-            print(Vh[3, 0:3]/Vh[3, 3])
             return Vh[3, 0:3]/Vh[3, 3]
 
         p3ds = []
-        for right_point, left_point in zip(right_points, left_points):
+        for right_point, left_point in zip(img1_points, img2_points):
             _p3d = DLT(P1, P2, right_point, left_point)
             p3ds.append(_p3d)
         p3ds = np.array(p3ds)
 
         return p3ds
+
+
+if __name__ == "__main__":
+    scs = StereoCameraSystem("right_camera", "left_camera", "cali_imgs/right_imgs",
+                             "cali_imgs/left_imgs", "cali_imgs/sync_imgs", [7, 9])
+    scs.calibrate(False, "test_mtx.npz")
