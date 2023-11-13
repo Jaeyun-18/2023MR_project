@@ -3,6 +3,12 @@ from mp_handler import *
 import numpy as np
 from typing import Tuple
 
+from stereo_camera import StereoCameraSystem
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from time import time
+from graph_plot import plot_3d
+
 # test algorithm for left-front-right 90 degree camera arrangement
 
 
@@ -18,8 +24,6 @@ def test_algorithm1(side_points: np.ndarray, front_side_points: np.ndarray) -> n
 
 
 # test algorithm for left-right 90 degree(45 each) camera arrangement
-
-
 def test_algorithm2(left_points: np.ndarray, right_points: np.ndarray) -> np.ndarray:
     diff_matrix = np.array([[1, -1, 0, 0], [0, 1, -1, 0], [0, 0, 1, -1]])
     left_vectors = diff_matrix @ left_points
@@ -47,20 +51,37 @@ def vectors_to_angles(final_vector: np.ndarray) -> Tuple[float, float]:
     return angle0, angle1
 
 
-left_landmarks = landmark_translate(True, ["H1", "S1", "E1", "W1"])
-front_landmarks = landmark_translate(
-    True, ["H1", "S1", "E1", "W1", "H2", "S2", "E2", "W2"])
+# "S1", "E1", "W1",
 
-left = PoseGetter(4, "left", left_landmarks, [640, 480])
-front = PoseGetter(6, "center", front_landmarks, [640, 480])
+
+landmarks = landmark_translate(
+    True, ["W1", "E1", "S1", "H1", "H2", "S2", "E2", "W2"])
+
+right = PoseGetter(4, "right", landmarks, [640, 480])
+left = PoseGetter(6, "left", landmarks, [640, 480])
 
 font_size = 0.8
 
 
-while front.is_open():
+TestCamSys = StereoCameraSystem("right_camera", "left_camera", "cali_imgs/right_imgs",
+                                "cali_imgs/left_imgs", "cali_imgs/sync_imgs", [7, 9])
+TestCamSys.calibrate(True, "test_mtx.npz")
+
+
+wcs = []
+times = []
+t0 = time()
+
+print(left.is_open())
+print(right.is_open())
+
+while left.is_open() and right.is_open():
     try:
         left_points, left_img = left.run_cycle()
-        front_points, front_img = front.run_cycle()
+        right_points, right_img = right.run_cycle()
+
+        right.show_vid(None)
+        left.show_vid(None)
 
         # f1 = test_algorithm1(left_points, front_points[:4])
         # f2 = test_algorithm2(left_points, front_points[:4])
@@ -73,13 +94,14 @@ while front.is_open():
 
         # front.show_vid({"S1": angle0, "E1": angle1})
         # left.show_vid({"S1": angle0, "E1": angle1})
-        left.show_vid(None)
-        front.show_vid(None)
-        print(front_points[6])
+        world_coord = TestCamSys.triangulate(right_points, left_points)
+        wcs.append(world_coord)
+        times.append(time() - t0)
 
     except Exception as e:
         print(e)
-        pass
 
-    if cv2.waitKey(5) & 0xFF == 27:
+    if cv2.waitKey(5) == ord('q'):
         break
+
+plot_3d(wcs, times)
