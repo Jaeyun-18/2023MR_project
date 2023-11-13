@@ -25,7 +25,7 @@ def cal_LS_0N2(right_shoulder_coor, left_shoulder_coor, left_elbow_coor, left_hi
 
 
 def cal_LE_46(left_shoulder_coor, left_elbow_coor, left_wrist_coor):  # upNdown 4, leftNright 6
-    left_shoulder_coor = np.array(left_elbow_coor)
+    left_shoulder_coor = np.array(left_shoulder_coor)
     left_elbow_coor = np.array(left_elbow_coor)
     left_wrist_coor = np.array(left_wrist_coor)
     upper_arm_vector = (left_elbow_coor - left_shoulder_coor) / \
@@ -47,7 +47,10 @@ def cal_LE_46(left_shoulder_coor, left_elbow_coor, left_wrist_coor):  # upNdown 
     phi = (np.arccos(np.dot(proj_vector, vector_z)/(np.linalg.norm(proj_vector)
            * np.linalg.norm(vector_z)))/np.pi)*180  # leftNright angle
 
-    theta = np.arcsin(np.dot(upper_arm_vector, lower_arm_vector))
+    print(np.linalg.norm(upper_arm_vector))
+    print(np.linalg.norm(lower_arm_vector))
+    print(np.dot(upper_arm_vector, lower_arm_vector))
+    theta = np.arccos(np.dot(upper_arm_vector, lower_arm_vector))
     theta = theta * 180 / np.pi
 
     return theta, phi
