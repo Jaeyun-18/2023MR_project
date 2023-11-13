@@ -30,7 +30,7 @@ class PoseGetter:
         try:
             self.image.flags.writeable = False
             self.result = self.pose.process(self.image)
-            landmarks = self.result.pose_landmarksx
+            landmarks = self.result.pose_landmarks
 
             ret = []
             if landmarks != None:

@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from time import time
 from graph_plot import plot_3d
+from new_functions import *
+
 
 # test algorithm for left-front-right 90 degree camera arrangement
 
@@ -71,6 +73,8 @@ TestCamSys.calibrate(True, "test_mtx.npz")
 wcs = []
 times = []
 t0 = time()
+m1s = []
+m2s = []
 
 print(left.is_open())
 print(right.is_open())
@@ -95,7 +99,12 @@ while left.is_open() and right.is_open():
         # front.show_vid({"S1": angle0, "E1": angle1})
         # left.show_vid({"S1": angle0, "E1": angle1})
         world_coord = TestCamSys.triangulate(right_points, left_points)
+        # m1, m2 = cal_LE_46(world_coord[2], world_coord[1], world_coord[0])
+        m1, m2 = cal_LS_0N2(world_coord[2], world_coord[1], world_coord[0])
+        print(m1, m2)
         wcs.append(world_coord)
+        m1s.append(m1)
+        m2s.append(m2)
         times.append(time() - t0)
 
     except Exception as e:
@@ -105,3 +114,7 @@ while left.is_open() and right.is_open():
         break
 
 plot_3d(wcs, times)
+
+ax = plt.plot(m1s)
+# ax = plt.plot(m2s)
+plt.show()

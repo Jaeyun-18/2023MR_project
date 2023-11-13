@@ -55,7 +55,7 @@ if __name__ == "__main__":
     # right_cam = Cameras({5: 'right_camera'}, "cali_imgs/right_imgs/")
     # right_cam.run()
 
-    both_cam = Cameras({6: 'right_camera', 4: 'left_camera'},
+    both_cam = Cameras({4: 'right_camera', 6: 'left_camera'},
                        "cali_imgs/sync_imgs/")
 
     both_cam.run()
