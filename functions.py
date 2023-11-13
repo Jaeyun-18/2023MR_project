@@ -1,6 +1,6 @@
 import numpy as np
 
-def calcualte_left_Shoudler_angle_coor(right_shoulder_coor, left_shoulder_coor, left_elbow_coor):
+def calcualte_left_Shoudler_angle_coor(right_shoulder_coor, left_shoulder_coor, left_elbow_coor, left_hip_coor):
     
     Shoulder_vec = np.array([left_shoulder_coor[0] - right_shoulder_coor[0],
                              left_shoulder_coor[1] - right_shoulder_coor[1],
@@ -10,7 +10,11 @@ def calcualte_left_Shoudler_angle_coor(right_shoulder_coor, left_shoulder_coor, 
                               left_elbow_coor[1] - left_shoulder_coor[1], 
                               left_elbow_coor[2] - left_shoulder_coor[2]])
     
-    Shoulder_angle_1, Shoulder_angle_2= cal_shoulder_anlge_vec(Shoulder_vec, Upper_arm_vec)
+    Body_vec = np.array([left_shoulder_coor[0] - left_hip_coor[0],
+                         left_shoulder_coor[1] - left_hip_coor[1],
+                         left_shoulder_coor[2] - left_hip_coor[2]])
+
+    Shoulder_angle_1, Shoulder_angle_2= cal_shoulder_anlge_vec(Shoulder_vec, Upper_arm_vec, Body_vec)
 
     return Shoulder_angle_1, Shoulder_angle_2
 
@@ -87,7 +91,7 @@ def calculate_Left_Elbow_angle(S1_F,S1_L,E1_F,W1_F,H1_F,E1_L,W1_L,H1_L,S2_F,S2_L
     return Elbow_angle_1, Elbow_angle_2    
 
 
-def calculate_right_Shoulder_anlge_coor(right_shoulder_coor, left_shoulder_coor, right_elbow_coor):
+def calculate_right_Shoulder_anlge_coor(right_shoulder_coor, left_shoulder_coor, right_elbow_coor, right_hip_coor):
     Shoulder_vec = np.array([right_shoulder_coor[0] - left_shoulder_coor[0],
                              right_shoulder_coor[1] - left_shoulder_coor[1],
                              right_shoulder_coor[2] - left_shoulder_coor[2]])
@@ -96,8 +100,11 @@ def calculate_right_Shoulder_anlge_coor(right_shoulder_coor, left_shoulder_coor,
                               right_elbow_coor[1] - right_shoulder_coor[1], 
                               right_elbow_coor[2] - right_shoulder_coor[2]])
     
-    Shoulder_angle_1, Shoulder_angle_2= cal_shoulder_anlge_vec(Shoulder_vec, Upper_arm_vec)
-    #cal_shoulder_anlge_vec 함수의 정면으로 뻗은 base_vec를 [0,1.0]으로 바꿀지 말지 생각해봐야됨
+    Body_vec = np.array([right_shoulder_coor[0] - right_hip_coor[0],
+                         right_shoulder_coor[1] - right_hip_coor[1],
+                         right_shoulder_coor[2] - right_hip_coor[2]])
+
+    Shoulder_angle_1, Shoulder_angle_2= cal_shoulder_anlge_vec(Shoulder_vec, Upper_arm_vec, Body_vec)
     return Shoulder_angle_1, Shoulder_angle_2
 
 
@@ -119,17 +126,18 @@ def calculate_right_Elbow_angle(right_shoulder_coor, left_shoulder_coor, right_e
     return Elbow_angle_1, Elbow_angle_2
 
 
-def cal_shoulder_anlge_vec(Shoulder_vec, Upper_arm_vec):
+def cal_shoulder_anlge_vec(Shoulder_vec, Upper_arm_vec, Body_vec):
     #첫번째 각도
     Shoulder_angle_1_semi = np.arccos(np.dot(Upper_arm_vec,Shoulder_vec)/(np.linalg.norm(Upper_arm_vec)*np.linalg.norm(Shoulder_vec)))
-    Shoulder_angle_1 = (Shoulder_angle_1_semi/np.pi)*180.0-90.0
+    Shoulder_angle_1 = (Shoulder_angle_1_semi/np.pi)*180.0
 
     #두번째 각도 / 정면으로 뻗은걸 0도로 기준
-    base_vec = np.array([0.0, -1.0])
-    Shoulder_vec[0] = 0.0
-    arm_vec = Shoulder_vec[1:]
+    Body_cross_vec = np.cross(Shoulder_vec, Body_vec)/(np.linalg.norm(Shoulder_vec)*np.linalg.norm(Body_vec))
+    Shoulder_cross_vec = np.cross(Shoulder_vec, Upper_arm_vec)/(np.linalg.norm(Shoulder_vec)*np.linalg.norm(Body_vec))
+    rev_Shoulder_cross_vec = (-1)*Shoulder_cross_vec
+    Shoulder_angle_2_semi = np.arccos(np.dot(Body_cross_vec,Shoulder_cross_vec)/np.linalg.norm(Body_cross_vec)*np.linalg.norm(Shoulder_cross_vec))
+    Shoulder_angle_2_semi_rev = np.arccos(np.dot(rev_Shoulder_cross_vec,Shoulder_cross_vec)/np.linalg.norm(rev_Shoulder_cross_vec)*np.linalg.norm(Shoulder_cross_vec))
 
-    Shoulder_angle_2_semi = np.arccos(np.dot(base_vec,arm_vec)/np.linalg.norm(arm_vec))
     Shoulder_angle_2 = (Shoulder_angle_2_semi/np.pi)*180.0
 
     return Shoulder_angle_1, Shoulder_angle_2
@@ -144,7 +152,7 @@ def cal_elbow_angle_vec(Shoulder_vec, Upper_arm_vec, Lower_arm_vec):
 
     Elbow_angle_2_semi = np.arccos(np.dot(Upper_cross_vec,Lower_cross_vec)/(np.linalg.norm(Upper_cross_vec)*np.linalg.norm(Lower_cross_vec)))
     Elbow_angle_2 = (Elbow_angle_2_semi/np.pi)*180.0
-
+ 
     return Elbow_angle_1, Elbow_angle_2
 
 
