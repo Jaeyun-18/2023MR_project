@@ -6,10 +6,6 @@ import numpy as np
 
 
 def cal_LS_0N2(right_shoulder_coor, left_shoulder_coor, left_elbow_coor, left_hip_coor): #leftNright:0 upNdown:2
-    right_shoulder_coor = np.array(right_shoulder_coor)
-    left_shoulder_coor = np.array(left_shoulder_coor)
-    left_elbow_coor = np.array(left_elbow_coor)
-    left_hip_coor = np.array(left_hip_coor)
     Shoulder_vec = left_shoulder_coor - right_shoulder_coor
     Upper_arm_vec = left_elbow_coor - left_shoulder_coor
     Body_vec = left_shoulder_coor - left_hip_coor
@@ -27,9 +23,6 @@ def cal_LS_0N2(right_shoulder_coor, left_shoulder_coor, left_elbow_coor, left_hi
     return motor0_angle, motor2_angle
 
 def cal_LE_46(left_shoulder_coor, left_elbow_coor, left_wrist_coor): #upNdown 4, leftNright 6
-    left_shoulder_coor = np.array(left_elbow_coor)
-    left_elbow_coor = np.array(left_elbow_coor)
-    left_wrist_coor = np.array(left_wrist_coor)
     upper_arm_vector = (left_elbow_coor - left_shoulder_coor)/np.linalg.norm(left_elbow_coor-left_shoulder_coor)
     lower_arm_vector = (left_wrist_coor - left_elbow_coor)/np.linalg.norm(left_wrist_coor - left_elbow_coor)
     vector_x = upper_arm_vector
@@ -66,9 +59,6 @@ def cal_RS_1N3(right_shoulder_coor, left_shoulder_coor, right_elbow_coor, right_
     return motor1_angle, motor3_anlge
 
 def cal_RE_57(right_shoulder_coor, right_elbow_coor, right_wrist_coor): #upNdown 5, leftNright 7
-    right_shoulder_coor = np.array(right_elbow_coor)
-    right_elbow_coor = np.array(right_elbow_coor)
-    right_wrist_coor = np.array(right_wrist_coor)
     upper_arm_vector = (right_elbow_coor - right_shoulder_coor)/np.linalg.norm(right_elbow_coor-right_shoulder_coor)
     lower_arm_vector = (right_wrist_coor - right_elbow_coor)/np.linalg.norm(right_wrist_coor - right_elbow_coor)
     vector_y = upper_arm_vector
