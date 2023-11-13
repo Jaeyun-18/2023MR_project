@@ -114,5 +114,3 @@ def cal_RE_57(right_hip_coor, left_shoulder_coor, right_shoulder_coor, right_elb
     phi = (np.arccos(np.dot(vector_z, Front_vec))) * 180 / np.pi # leftNright angle
 
     return theta, phi
-
-cal_LS_0N2(np.array([-1,0,0]),np.array([1,0,0]),np.array([2,1,2]),np.array([0,-2,0]))
