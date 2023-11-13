@@ -99,12 +99,14 @@ while left.is_open() and right.is_open():
         # front.show_vid({"S1": angle0, "E1": angle1})
         # left.show_vid({"S1": angle0, "E1": angle1})
         world_coord = TestCamSys.triangulate(right_points, left_points)
-        m1, m2 = cal_LE_46(world_coord[2], world_coord[1], world_coord[0])
-        # m1, m2 = cal_LS_0N2(
-        #    world_coord[5], world_coord[2], world_coord[1], world_coord[3])
-        print(m1, m2)
+        # m1, m2 = cal_LE_46(world_coord[2], world_coord[1], world_coord[0])
+        m1, m2 = cal_LS_0N21(
+            world_coord[5], world_coord[2], world_coord[1], world_coord[3])
+        m3, m4 = cal_LS_0N2(
+            world_coord[5], world_coord[2], world_coord[1], world_coord[3])
         wcs.append(world_coord)
-        m1s.append(m1)
+        print(m2, m4)
+        m1s.append(m4)
         m2s.append(m2)
         times.append(time() - t0)
 
@@ -117,5 +119,5 @@ while left.is_open() and right.is_open():
 plot_3d(wcs, times)
 
 ax = plt.plot(m1s)
-# ax = plt.plot(m2s)
+ax = plt.plot(m2s)
 plt.show()
