@@ -23,13 +23,44 @@ def cal_LS_0N2(right_shoulder_coor, left_shoulder_coor, left_elbow_coor, left_hi
         np.linalg.norm(Upper_arm_projection_vec)*np.linalg.norm(front_vec)))
     motor0_angle = (motor0_angle/np.pi)*180.0
     motor2_angle = (motor2_angle/np.pi)*180.0
-    print(motor0_angle)
-    print(motor2_angle)
+
+    Z = np.cross(Shoulder_vec, Body_vec)
+    uz = np.dot(Z, Upper_arm_vec) / np.linalg.norm(Z)
+    ub = np.dot(Body_vec, Upper_arm_vec) / np.linalg.norm(Body_vec)
+    us = np.dot(Shoulder_vec, Upper_arm_vec) / np.linalg.norm(Shoulder_vec)
+    motor0_angle = np.arctan2(ub, us)
+    motor2_angle = np.arctan2(us, uz)
+
+    motor0_angle = motor0_angle * 180 / np.pi  # fr
+    motor2_angle = motor2_angle * 180 / np.pi  # ud
     return motor0_angle, motor2_angle
 
 
-def cal_LE_46(left_shoulder_coor, left_elbow_coor, left_wrist_coor):  # upNdown 4, leftNright 6
-    left_shoulder_coor = np.array(left_elbow_coor)
+def cal_LS_0N21(right_shoulder_coor, left_shoulder_coor, left_elbow_coor, left_hip_coor):  # leftNright:0 upNdown:2
+    Shoulder_vec = left_shoulder_coor - right_shoulder_coor
+    Upper_arm_vec = left_elbow_coor - left_shoulder_coor
+    Body_vec = left_shoulder_coor - left_hip_coor
+
+    front_vec = np.cross(Shoulder_vec, Body_vec)
+    z_vec = np.cross(Shoulder_vec, front_vec)*(-1)
+    motor2_angle = np.arccos(np.dot(
+        Upper_arm_vec, z_vec)/(np.linalg.norm(Upper_arm_vec)*np.linalg.norm(z_vec)))
+
+    re_z_vec = z_vec / \
+        np.linalg.norm(z_vec)*np.linalg.norm(Upper_arm_vec) * \
+        np.cos(motor2_angle)
+    Upper_arm_projection_vec = Upper_arm_vec - re_z_vec
+    motor0_angle = np.arccos(np.dot(Upper_arm_projection_vec, front_vec)/(
+        np.linalg.norm(Upper_arm_projection_vec)*np.linalg.norm(front_vec)))
+    motor0_angle = (motor0_angle/np.pi)*180.0
+    motor2_angle = (motor2_angle/np.pi)*180.0
+    print(motor0_angle)
+    return motor0_angle, motor2_angle
+
+
+def cal_LE_46(left_hip_coor, left_shoulder_coor, right_shoulder_coor, left_elbow_coor, left_wrist_coor):  # upNdown 4, leftNright 6
+    left_hip_coor = np.array(left_hip_coor)
+    left_shoulder_coor = np.array(left_shoulder_coor)
     left_elbow_coor = np.array(left_elbow_coor)
     left_wrist_coor = np.array(left_wrist_coor)
     upper_arm_vector = (left_elbow_coor - left_shoulder_coor) / \
@@ -39,6 +70,7 @@ def cal_LE_46(left_shoulder_coor, left_elbow_coor, left_wrist_coor):  # upNdown 
     vector_x = upper_arm_vector
     vector_z = np.cross(lower_arm_vector, vector_x)
     vector_y = np.cross(vector_z, vector_x)
+    body_vector = np.cross()
 
     theta = (np.arccos((np.dot(vector_x, lower_arm_vector)/(np.linalg.norm(vector_x)
              * np.linalg.norm(lower_arm_vector))))/np.pi)*180  # upNdown angle
@@ -51,7 +83,7 @@ def cal_LE_46(left_shoulder_coor, left_elbow_coor, left_wrist_coor):  # upNdown 
     phi = (np.arccos(np.dot(proj_vector, vector_z)/(np.linalg.norm(proj_vector)
            * np.linalg.norm(vector_z)))/np.pi)*180  # leftNright angle
 
-    theta = np.arcsin(np.dot(upper_arm_vector, lower_arm_vector))
+    theta = np.arccos(np.dot(upper_arm_vector, lower_arm_vector))
     theta = theta * 180 / np.pi
 
     return theta, phi
