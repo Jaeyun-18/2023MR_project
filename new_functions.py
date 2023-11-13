@@ -14,13 +14,17 @@ def cal_LS_0N2(right_shoulder_coor, left_shoulder_coor, left_elbow_coor, left_hi
     z_vec = np.cross(Shoulder_vec, front_vec)*(-1)
     motor2_angle = np.arccos(np.dot(
         Upper_arm_vec, z_vec)/(np.linalg.norm(Upper_arm_vec)*np.linalg.norm(z_vec)))
-    re_z_vec = np.cos(motor2_angle)*z_vec/np.linalg.norm(z_vec)
-    Shoulder_projection_vec = Shoulder_vec - re_z_vec
-    motor0_angle = np.arccos(np.dot(Shoulder_projection_vec, front_vec)/(
-        np.linalg.norm(Shoulder_projection_vec)*np.linalg.norm(front_vec)))
-
+    
+    motor2_angle = np.pi/2
+    
+    re_z_vec = z_vec/np.linalg.norm(z_vec)*np.linalg.norm(Upper_arm_vec)*np.cos(motor2_angle)
+    Upper_arm_projection_vec = Upper_arm_vec - re_z_vec
+    motor0_angle = np.arccos(np.dot(Upper_arm_projection_vec, front_vec)/(
+        np.linalg.norm(Upper_arm_projection_vec)*np.linalg.norm(front_vec)))
     motor0_angle = (motor0_angle/np.pi)*180.0
     motor2_angle = (motor2_angle/np.pi)*180.0
+    print(motor0_angle)
+    print(motor2_angle)
     return motor0_angle, motor2_angle
 
 
@@ -95,3 +99,5 @@ def cal_RE_57(right_shoulder_coor, right_elbow_coor, right_wrist_coor):  # upNdo
            * np.norm(vector_z)))/np.pi)*180  # leftNright angle
 
     return theta, phi
+
+cal_LS_0N2(np.array([-1,0,0]),np.array([1,0,0]),np.array([2,1,2]),np.array([0,-2,0]))
