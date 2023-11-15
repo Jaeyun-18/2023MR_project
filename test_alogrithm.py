@@ -60,7 +60,7 @@ landmarks = landmark_translate(
     True, ["W1", "E1", "S1", "H1", "H2", "S2", "E2", "W2"])
 
 right = PoseGetter(4, "right", landmarks, [640, 480])
-left = PoseGetter(6, "left", landmarks, [640, 480])
+left = PoseGetter(2, "left", landmarks, [640, 480])
 
 font_size = 0.8
 
