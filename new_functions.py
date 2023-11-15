@@ -66,17 +66,12 @@ def cal_LE_46(left_hip_coor, left_shoulder_coor, right_shoulder_coor, left_elbow
 
     theta = (np.arccos(np.dot(vector_x, lower_arm_vector))/np.pi)*180  # upNdown angle
 
-    Body_vec = left_shoulder_coor - left_hip_coor #
-    front_vec = np.cross(Shoulder_vec, Body_vec) #
-    arm_z_vec = np.cross(Shoulder_vec, front_vec) #
-    arm_z_vec_unit = arm_z_vec/np.linalg.norm(arm_z_vec)
-    theta_2 = np.arccos((np.dot(arm_z_vec, upper_arm_vector)/(np.linalg.norm(arm_z_vec)*np.linalg.norm(upper_arm_vector))))
-    direction = np.linalg.norm(upper_arm_vector)*np.cos(theta_2)
-    change_vector = arm_z_vec_unit * direction
-    proj_upper_arm_vec = upper_arm_vector - change_vector
-    
-    phi = np.arccos(np.dot(proj_upper_arm_vec,np.cross(upper_arm_vector,lower_arm_vector))/(np.linalg.norm(proj_upper_arm_vec)*np.linalg.norm(np.cross(upper_arm_vector,lower_arm_vector)))) * 180 / np.pi # leftNright angle
+    Upper_cross_vec = np.cross(upper_arm_vector, Shoulder_vec)/(np.linalg.norm(Shoulder_vec)*np.linalg.norm(upper_arm_vector))
+    Lower_cross_vec = np.cross(upper_arm_vector,lower_arm_vector)/(np.linalg.norm(upper_arm_vector)*np.linalg.norm(lower_arm_vector))
 
+    Elbow_angle_2_semi = np.arcsin(np.cross(Upper_cross_vec,Lower_cross_vec)/(np.linalg.norm(Upper_cross_vec)*np.linalg.norm(Lower_cross_vec)))
+    phi = (Elbow_angle_2_semi/np.pi)*180.0 + (np.pi/2)
+    
     return theta, phi
 
 
