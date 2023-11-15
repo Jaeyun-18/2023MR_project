@@ -73,8 +73,7 @@ TestCamSys.calibrate(True, "test_mtx.npz")
 wcs = []
 times = []
 t0 = time()
-m1s = []
-m2s = []
+ms = []
 
 print(left.is_open())
 print(right.is_open())
@@ -83,9 +82,6 @@ while left.is_open() and right.is_open():
     try:
         left_points, left_img = left.run_cycle()
         right_points, right_img = right.run_cycle()
-
-        right.show_vid(None)
-        left.show_vid(None)
 
         # f1 = test_algorithm1(left_points, front_points[:4])
         # f2 = test_algorithm2(left_points, front_points[:4])
@@ -99,16 +95,18 @@ while left.is_open() and right.is_open():
         # front.show_vid({"S1": angle0, "E1": angle1})
         # left.show_vid({"S1": angle0, "E1": angle1})
         world_coord = TestCamSys.triangulate(right_points, left_points)
-        # m1, m2 = cal_LE_46(world_coord[2], world_coord[1], world_coord[0])
-        m1, m2 = cal_LS_0N21(
+        m1, m2 = cal_LS_0N2(
             world_coord[5], world_coord[2], world_coord[1], world_coord[3])
-        m3, m4 = cal_LS_0N2(
-            world_coord[5], world_coord[2], world_coord[1], world_coord[3])
+        m3, m4 = cal_LE_46(
+            world_coord[3], world_coord[2], world_coord[5], world_coord[1], world_coord[0])
+
         wcs.append(world_coord)
-        print(m2, m4)
-        m1s.append(m4)
-        m2s.append(m2)
+        print(m3, m4)
+        ms.append([m1, m2, m3, m4])
         times.append(time() - t0)
+
+        right.show_vid(None)
+        left.show_vid(None)
 
     except Exception as e:
         print(e)
@@ -118,6 +116,9 @@ while left.is_open() and right.is_open():
 
 plot_3d(wcs, times)
 
-ax = plt.plot(m1s)
-ax = plt.plot(m2s)
+ms = np.array(ms)
+ax = plt.plot(ms[:, 0])
+ax = plt.plot(ms[:, 1])
+ax = plt.plot(ms[:, 2])
+ax = plt.plot(ms[:, 3])
 plt.show()

@@ -22,7 +22,6 @@ class PoseGetter:
     def run_cycle(self) -> Tuple[np.ndarray, cv2.Mat]:
         success, self.image = self.cap.read()
         self.image = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
-        self.image = cv2.flip(self.image, 1)
 
         if not success:
             print("camera {} does not work".format(self.name))
