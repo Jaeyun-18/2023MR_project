@@ -95,7 +95,7 @@ while left.is_open() and right.is_open():
         # front.show_vid({"S1": angle0, "E1": angle1})
         # left.show_vid({"S1": angle0, "E1": angle1})
         world_coord = TestCamSys.triangulate(right_points, left_points)
-        m1, m2 = cal_LS_0N2(
+        m1, m2 = cal_LS_02(
             world_coord[5], world_coord[2], world_coord[1], world_coord[3])
         m3, m4 = cal_LE_46(
             world_coord[3], world_coord[2], world_coord[5], world_coord[1], world_coord[0])
