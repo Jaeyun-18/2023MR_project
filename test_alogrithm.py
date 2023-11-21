@@ -9,6 +9,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from time import time
 from graph_plot import plot_3d
 from new_functions import *
+from motor_control import *
 
 
 # test algorithm for left-front-right 90 degree camera arrangement
@@ -50,14 +51,12 @@ def vectors_to_angles(final_vector: np.ndarray) -> Tuple[float, float]:
         (np.linalg.norm(CL0) / (np.linalg.norm(L0) * np.linalg.norm(L1)))) / np.pi * 180
     angle1 = np.arcsin(
         (np.linalg.norm(CL1) / (np.linalg.norm(L1) * np.linalg.norm(L2)))) / np.pi * 180
+    
     return angle0, angle1
-
-
-# "S1", "E1", "W1",
-
 
 landmarks = landmark_translate(
     True, ["W1", "E1", "S1", "H1", "H2", "S2", "E2", "W2"])
+          # 0     1     2     3     4     5     6     7
 
 right = PoseGetter(4, "right", landmarks, [640, 480])
 left = PoseGetter(6, "left", landmarks, [640, 480])
@@ -95,15 +94,19 @@ while left.is_open() and right.is_open():
         # front.show_vid({"S1": angle0, "E1": angle1})
         # left.show_vid({"S1": angle0, "E1": angle1})
         world_coord = TestCamSys.triangulate(right_points, left_points)
-        m1, m2 = cal_LS_02(
-            world_coord[5], world_coord[2], world_coord[1], world_coord[3])
-        m3, m4 = cal_LE_46(
-            world_coord[3], world_coord[2], world_coord[5], world_coord[1], world_coord[0])
-
-        wcs.append(world_coord)
-        print(m3, m4)
-        ms.append([m1, m2, m3, m4])
-        times.append(time() - t0)
+        Angle_LS0, Angle_LS2 = cal_LS_02(world_coord[2], world_coord[1], world_coord[3], world_coord[5])
+        Angle_RS0, Angle_RS2 = cal_RS_13(world_coord[2], world_coord[4], world_coord[5], world_coord[6])
+        Angle_LE0, Angle_LE2 = cal_LE_46(world_coord[2], world_coord[1], world_coord[0], world_coord[5])
+        Angle_RE0, Angle_RE2 = cal_RE_57(world_coord[2], world_coord[4], world_coord[5], world_coord[6])
+        
+        goal_angle = [[Angle_LS0],[Angle_LS2],[Angle_RS0],[Angle_RS2],[Angle_LE0],[Angle_LE2],[Angle_RE0],[Angle_RE2]]
+        
+        motor_control(goal_angle)
+        
+        # wcs.append(world_coord)
+        # print(m3, m4)
+        # ms.append([m1, m2, m3, m4])
+        # times.append(time() - t0)
 
         right.show_vid(None)
         left.show_vid(None)
