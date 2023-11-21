@@ -99,7 +99,9 @@ while left.is_open() and right.is_open():
         Angle_LE4, Angle_LE6 = cal_LE_46(world_coord[2], world_coord[1], world_coord[0], world_coord[5])
         Angle_RE5, Angle_RE7 = cal_RE_57(world_coord[2], world_coord[4], world_coord[5], world_coord[6], world_coord[7])
         
-        # goal_angle = [[Angle_LS0],[Angle_LS2],[Angle_RS0],[Angle_RS2],[Angle_LE0],[Angle_LE2],[Angle_RE0],[Angle_RE2]]
+        goal_angle = [[Angle_LS0],[Angle_LS2],[Angle_RS1],[Angle_RS3],[Angle_LE4],[Angle_LE6],[Angle_RE5],[Angle_RE7]]
+        
+        print(goal_angle)
         
         # motor_control(goal_angle)
         
