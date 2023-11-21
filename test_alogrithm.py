@@ -58,8 +58,8 @@ landmarks = landmark_translate(
     True, ["W1", "E1", "S1", "H1", "H2", "S2", "E2", "W2"])
           # 0     1     2     3     4     5     6     7
 
-right = PoseGetter(4, "right", landmarks, [640, 480])
-left = PoseGetter(6, "left", landmarks, [640, 480])
+right = PoseGetter(2, "right", landmarks, [640, 480])
+left = PoseGetter(4, "left", landmarks, [640, 480])
 
 font_size = 0.8
 
@@ -71,7 +71,7 @@ TestCamSys.calibrate(True, "test_mtx.npz")
 
 wcs = []
 times = []
-t0 = time()
+#t0 = time()
 ms = []
 
 print(left.is_open())
@@ -95,13 +95,13 @@ while left.is_open() and right.is_open():
         # left.show_vid({"S1": angle0, "E1": angle1})
         world_coord = TestCamSys.triangulate(right_points, left_points)
         Angle_LS0, Angle_LS2 = cal_LS_02(world_coord[2], world_coord[1], world_coord[3], world_coord[5])
-        Angle_RS0, Angle_RS2 = cal_RS_13(world_coord[2], world_coord[4], world_coord[5], world_coord[6])
-        Angle_LE0, Angle_LE2 = cal_LE_46(world_coord[2], world_coord[1], world_coord[0], world_coord[5])
-        Angle_RE0, Angle_RE2 = cal_RE_57(world_coord[2], world_coord[4], world_coord[5], world_coord[6])
+        Angle_RS1, Angle_RS3 = cal_RS_13(world_coord[2], world_coord[4], world_coord[5], world_coord[6])
+        Angle_LE4, Angle_LE6 = cal_LE_46(world_coord[2], world_coord[1], world_coord[0], world_coord[5])
+        Angle_RE5, Angle_RE7 = cal_RE_57(world_coord[2], world_coord[4], world_coord[5], world_coord[6], world_coord[7])
         
-        goal_angle = [[Angle_LS0],[Angle_LS2],[Angle_RS0],[Angle_RS2],[Angle_LE0],[Angle_LE2],[Angle_RE0],[Angle_RE2]]
+        # goal_angle = [[Angle_LS0],[Angle_LS2],[Angle_RS0],[Angle_RS2],[Angle_LE0],[Angle_LE2],[Angle_RE0],[Angle_RE2]]
         
-        motor_control(goal_angle)
+        # motor_control(goal_angle)
         
         # wcs.append(world_coord)
         # print(m3, m4)

@@ -48,7 +48,7 @@ def cal_LS_02(left_shoulder_coor, left_elbow_coor, left_hip_coor, right_shoulder
             np.sin(Phi_L - 90.0)
         upper_arm_projection_vec = upper_arm_vec + proj_z_vec
     else:
-        re_z_vec = vector_z / \
+        proj_z_vec = vector_z / \
             np.linalg.norm(vector_z)*np.linalg.norm(upper_arm_vec) * \
             np.cos(Phi_L)
         upper_arm_projection_vec = upper_arm_vec - proj_z_vec
@@ -68,19 +68,28 @@ def cal_RS_13(left_shoulder_coor, right_hip_coor, right_shoulder_coor, right_elb
     Body_vec = right_hip_coor - right_shoulder_coor #right hip to right shoulder body vector
     Front_vec = np.cross(Body_vec, Shoulder_vec) #back to front(y-axis)
     
-    upper_arm_vector = (right_elbow_coor - right_shoulder_coor) / \
-        np.linalg.norm(right_elbow_coor - right_shoulder_coor)
+    upper_arm_vector = (right_elbow_coor - right_shoulder_coor)
     
     vector_z = np.cross(Shoulder_vec, Front_vec)
-    
-    proj_z_vec = np.cos(Phi_R)*vector_z/np.linalg.norm(vector_z)
-    Shoulder_projection_vec = Shoulder_vec - proj_z_vec
     
     Phi_R = np.arccos(np.dot(upper_arm_vector, vector_z) / \
         (np.linalg.norm(upper_arm_vector)*np.linalg.norm(vector_z))) #upNdown angle
     
-    Theta_R = np.arccos(np.dot(Shoulder_projection_vec, Front_vec)/(
-        np.linalg.norm(Shoulder_projection_vec)*np.linalg.norm(Front_vec))) #frontNback angle
+    if Phi_R > np.pi/2:
+        proj_z_vec = vector_z / \
+            np.linalg.norm(vector_z)*np.linalg.norm(upper_arm_vector) * \
+            np.sin(Phi_R - 90.0)
+        upper_arm_projection_vec = upper_arm_vector + proj_z_vec
+    else:
+        proj_z_vec = vector_z / \
+            np.linalg.norm(vector_z)*np.linalg.norm(upper_arm_vector) * \
+            np.cos(Phi_R)
+        upper_arm_projection_vec = upper_arm_vector - proj_z_vec
+    
+    proj_z_vec = np.cos(Phi_R)*vector_z/np.linalg.norm(vector_z)
+    
+    Theta_R = np.arccos(np.dot(upper_arm_projection_vec, Front_vec)/(
+        np.linalg.norm(upper_arm_projection_vec)*np.linalg.norm(Front_vec))) #frontNback angle
 
     Theta_R = rad2six(Theta_R)
     Phi_R = rad2six(Phi_R)
