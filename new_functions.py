@@ -7,8 +7,7 @@ import numpy as np
 def rad2six(radian_angle):
     six_angle = (radian_angle / np.pi) * 180
     
-    return six_angle
-    
+    return six_angle    
 
 # def cal_LS_0N2(right_shoulder_coor, left_shoulder_coor, left_elbow_coor, left_hip_coor):  # leftNright:0 upNdown:2
 #     Shoulder_vec = left_shoulder_coor - right_shoulder_coor
@@ -136,13 +135,10 @@ def cal_RE_57(left_shoulder_coor, right_hip_coor, right_shoulder_coor, right_elb
         np.linalg.norm(right_elbow_coor-left_shoulder_coor)
     lower_arm_vector = (right_wrist_coor - right_elbow_coor) / \
         np.linalg.norm(right_wrist_coor - right_elbow_coor)
-
-    vector_z = np.cross(upper_arm_vector, lower_arm_vector) #down to up(z-axis)
-
     Shoulder_vec = right_shoulder_coor - left_shoulder_coor #left to right shoulder vector(x-axis)
-    Body_vec = right_shoulder_coor - right_hip_coor #right hip to right shoulder body vector
-    Front_vec = np.cross(Body_vec, Shoulder_vec) #back to front(y-axis)
 
+    Theta_R = rad2six(np.arccos(np.dot(upper_arm_vector, lower_arm_vector))) # upNdown angle
+    
     Shoulder_cross_vec = np.cross(Shoulder_vec,upper_arm_vector) / \
         (np.linalg.norm(Shoulder_vec)*np.linalg.norm(upper_arm_vector))
     Elbow_cross_vec = np.cross(lower_arm_vector, upper_arm_vector) / \
@@ -150,7 +146,5 @@ def cal_RE_57(left_shoulder_coor, right_hip_coor, right_shoulder_coor, right_elb
         
     Phi_R = rad2six((np.arccos(np.dot(Shoulder_cross_vec, Elbow_cross_vec) / \
         (np.linalg.norm(Shoulder_cross_vec)*np.linalg.norm(Elbow_cross_vec))))) + (np.pi/2) # leftNright angle
-    
-    return Theta_R, Phi_R
 
     return Theta_R, Phi_R

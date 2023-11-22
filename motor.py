@@ -155,7 +155,6 @@ while 1:
 
             if not result:
                 break
-
         # Change goal position
         if index == len(dxl_goal_position[0])-1:
             index = 0
