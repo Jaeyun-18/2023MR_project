@@ -71,7 +71,7 @@ TestCamSys.calibrate(True, "test_mtx.npz")
 
 wcs = []
 times = []
-#t0 = time()
+t0 = time()
 ms = []
 
 print(left.is_open())
