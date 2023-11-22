@@ -29,6 +29,13 @@ def rad2six(radian_angle):
     
 #     return motor0_angle, Phi_L
 
+def cal_angle(world_coord):
+    Angle_LS0, Angle_LS2 = cal_LS_02(world_coord[2], world_coord[1], world_coord[3], world_coord[5])
+    Angle_RS1, Angle_RS3 = cal_RS_13(world_coord[2], world_coord[4], world_coord[5], world_coord[6])
+    Angle_LE4, Angle_LE6 = cal_LE_46(world_coord[2], world_coord[1], world_coord[0], world_coord[5])
+    Angle_RE5, Angle_RE7 = cal_RE_57(world_coord[2], world_coord[4], world_coord[5], world_coord[6], world_coord[7])
+    goal_angle = [[Angle_LS0],[Angle_LS2],[Angle_RS1],[Angle_RS3],[Angle_LE4],[Angle_LE6],[Angle_RE5],[Angle_RE7]]
+    return goal_angle
 
 def cal_LS_02(left_shoulder_coor, left_elbow_coor, left_hip_coor, right_shoulder_coor):  # leftNright:0 upNdown:2
     

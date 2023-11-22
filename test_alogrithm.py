@@ -94,13 +94,7 @@ while left.is_open() and right.is_open():
         # front.show_vid({"S1": angle0, "E1": angle1})
         # left.show_vid({"S1": angle0, "E1": angle1})
         world_coord = TestCamSys.triangulate(right_points, left_points)
-        Angle_LS0, Angle_LS2 = cal_LS_02(world_coord[2], world_coord[1], world_coord[3], world_coord[5])
-        Angle_RS1, Angle_RS3 = cal_RS_13(world_coord[2], world_coord[4], world_coord[5], world_coord[6])
-        Angle_LE4, Angle_LE6 = cal_LE_46(world_coord[2], world_coord[1], world_coord[0], world_coord[5])
-        Angle_RE5, Angle_RE7 = cal_RE_57(world_coord[2], world_coord[4], world_coord[5], world_coord[6], world_coord[7])
-        
-        goal_angle = [[Angle_LS0],[Angle_LS2],[Angle_RS1],[Angle_RS3],[Angle_LE4],[Angle_LE6],[Angle_RE5],[Angle_RE7]]
-        
+        goal_angle = cal_angle(world_coord)
         print(goal_angle)
         
         # motor_control(goal_angle)
