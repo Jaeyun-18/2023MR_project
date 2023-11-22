@@ -9,7 +9,6 @@ from mpl_toolkits.mplot3d import Axes3D
 from time import time
 from graph_plot import plot_3d
 from new_functions import *
-from motor_control import *
 
 
 # test algorithm for left-front-right 90 degree camera arrangement
