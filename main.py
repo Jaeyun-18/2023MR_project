@@ -1,57 +1,60 @@
 import cv2
 from mp_handler import *
-from functions import *
 import numpy as np
+from typing import Tuple
 
-front_landmarks = landmark_translate(
-    True, ["S1", "S2", "E1", "E2", "W1", "W2", "H1", "H2"])
-left_landmarks = landmark_translate(True, ["S1", "S2", "E1", "W1", "H1"])
-# right_landmarks = landmark_translate(True, ["S1", "S2", "E2", "W2", "H2"])
+from stereo_camera import StereoCameraSystem
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from time import time
+from graph_plot import plot_3d
+from new_functions import *
+import threading
 
-left = PoseGetter(6, "left", left_landmarks, [200, 200])
-front = PoseGetter(4, "front", front_landmarks, [200, 200])
-# right = PoseGetter(2, "right", right_landmarks)
-shoulder_length = float(input('INPUT SHOULDER_LENGTH : '))
+landmarks = landmark_translate(
+    True, ["W1", "E1", "S1", "H1", "H2", "S2", "E2", "W2"])
+          # 0     1     2     3     4     5     6     7
 
-while front.is_open():
+right = PoseGetter(2, "right", landmarks, [640, 480])
+left = PoseGetter(4, "left", landmarks, [640, 480])
+
+font_size = 0.8
+
+TestCamSys = StereoCameraSystem("right_camera", "left_camera", "cali_imgs/right_imgs",
+                                "cali_imgs/left_imgs", "cali_imgs/sync_imgs", [7, 9])
+TestCamSys.calibrate(True, "test_mtx.npz")
+
+wcs = []
+times = []
+t0 = time.time()
+ms = []
+
+print(left.is_open())
+print(right.is_open())
+
+while left.is_open() and right.is_open():
     try:
         left_points, left_img = left.run_cycle()
-        front_points, front_img = front.run_cycle()
-        # right_points, right_img = right.run_cycle()
+        right_points, right_img = right.run_cycle()
+        world_coord = TestCamSys.triangulate(right_points, left_points)
 
-        # marking
-        S1_F = front_points[0]
-        S2_F = front_points[1]
-        E1_F = front_points[2]
-        E2_F = front_points[3]
-        W1_F = front_points[4]
-        W2_F = front_points[5]
-        H1_F = front_points[6]
-        H2_F = front_points[7]
-
-        S1_L = left_points[0]
-        S2_L = left_points[1]
-        E1_L = left_points[2]
-        W1_L = left_points[3]
-        H1_L = left_points[4]
-
-        # S1_R = left_points[0]
-        # S2_R = left_points[1]
-        # E2_R = left_points[2]
-        # W2_R = left_points[3]
-        # H2_R = left_points[4]
-
-        Shoudler_angle_1, Shoulder_angle_2 = calculate_Left_Shoulder_angle(
-            S1_F, S2_F, E1_F, S1_L, E1_L, S2_L)
-        Elbow_angle_1, Elbow_angle_2 = calculate_Left_Elbow_angle(
-            S1_F, S1_L, E1_F, W1_F, H1_F, E1_L, W1_L, H1_L, S2_F, S2_L, shoulder_length)
-
+        goal_angle = cal_angle(world_coord)
+        print(goal_angle)
+        
+        right.show_vid(None)
         left.show_vid(None)
-        front.show_vid(None)
-        print(Shoudler_angle_1, Shoulder_angle_2)
-        # right.show_vid(None)
 
-    except:
-        pass
-    if cv2.waitKey(5) & 0xFF == 27:
+    except Exception as e:
+        print(e)
+
+    if cv2.waitKey(5) == ord('q'):
         break
+
+plot_3d(wcs, times)
+
+ms = np.array(ms)
+ax = plt.plot(ms[:, 0])
+ax = plt.plot(ms[:, 1])
+ax = plt.plot(ms[:, 2])
+ax = plt.plot(ms[:, 3])
+plt.show()

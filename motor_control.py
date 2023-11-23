@@ -57,7 +57,7 @@ goal_angle=[
     [0],
     [0],
     [0],
-    [80],
+    [0],
     [0],
     [0],
     [0]
@@ -65,12 +65,12 @@ goal_angle=[
 
 initial_angle=[ # initial angle reset(차렷 자세)
     [0], #0
-    [90], #2 # right arm 
+    [-90], #2 # right arm 
     [0], #4
     [0], #6
     [0], #1
-    [0], #3
-    [-90], #5 # left arm
+    [90], #3
+    [0], #5 # left arm
     [0]  #7
 ]
 

@@ -55,7 +55,7 @@ def cal_LS_13(left_shoulder_coor, left_elbow_coor, left_hip_coor, right_shoulder
         np.linalg.norm(upper_arm_projection_vec)*np.linalg.norm(Shoulder_vec))) # frontNback angle
     
     check_angle = np.arccos(np.dot(upper_arm_projection_vec, Front_vec)/(np.linalg.norm(upper_arm_projection_vec)*np.linalg.norm(Front_vec)))
-    if check_angle > np.pi/2:
+    if check_angle < np.pi/2:
         Theta_L *= (-1)
 
     Theta_L = rad2six(Theta_L)
@@ -99,7 +99,6 @@ def cal_RS_02(left_shoulder_coor, right_hip_coor, right_shoulder_coor, right_elb
 
     return Theta_R, Phi_R
 
-
 def cal_LE_57(left_shoulder_coor,  left_elbow_coor, left_wrist_coor, right_shoulder_coor):  # upNdown 4, leftNright 6
 
     upper_arm_vector = (left_elbow_coor - left_shoulder_coor) / \
@@ -119,7 +118,6 @@ def cal_LE_57(left_shoulder_coor,  left_elbow_coor, left_wrist_coor, right_shoul
         (np.linalg.norm(Shoulder_cross_vec)*np.linalg.norm(Elbow_cross_vec))))) + (np.pi/2) # leftNright angle
 
     return Theta_L, Phi_L
-
 
 def cal_RE_46(left_shoulder_coor, right_hip_coor, right_shoulder_coor, right_elbow_coor, right_wrist_coor):  # upNdown 5, leftNright 7
 
@@ -141,6 +139,21 @@ def cal_RE_46(left_shoulder_coor, right_hip_coor, right_shoulder_coor, right_elb
 
     return Theta_R, Phi_R
 
+def trans_angle(goal_angle):
+    #right arm
+    goal_angle[0][0] = goal_angle[0][0] #그대로 사용
+    goal_angle[0][1] = goal_angle[0][1]*(-1) + 90 #가장 위 기준 0~180 -> 90~(-90)
+    goal_angle[0][2] = goal_angle[0][2]
+    goal_angle[0][3] = goal_angle[0][3] 
+
+    #left arm
+    goal_angle[0][4] = goal_angle[0][4] #그대로 사용
+    goal_angle[0][5] = goal_angle[0][5] - 90 #가장 위 기준 0~180 -> (-90)~90
+    goal_angle[0][6] = goal_angle[0][6]
+    goal_angle[0][7] = goal_angle[0][7]
+
+    return goal_angle
+
 def cal_angle(world_coord):
     Angle_LS1, Angle_LS3 = cal_LS_13(world_coord[2], world_coord[1], world_coord[3], world_coord[5])
     Angle_RS0, Angle_RS2 = cal_RS_02(world_coord[2], world_coord[4], world_coord[5], world_coord[6])
@@ -148,5 +161,6 @@ def cal_angle(world_coord):
     Angle_RE4, Angle_RE6 = cal_RE_46(world_coord[2], world_coord[4], world_coord[5], world_coord[6], world_coord[7])
     
     goal_angle = [[Angle_RS0],[Angle_RS2],[Angle_RE4],[Angle_RE6],[Angle_LS1],[Angle_LS3],[Angle_LE5],[Angle_LE7]]
+    goal_angle = trans_angle(goal_angle)
     
     return goal_angle
