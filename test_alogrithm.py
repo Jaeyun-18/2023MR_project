@@ -57,8 +57,8 @@ landmarks = landmark_translate(
     True, ["W1", "E1", "S1", "H1", "H2", "S2", "E2", "W2"])
           # 0     1     2     3     4     5     6     7
 
-right = PoseGetter(2, "right", landmarks, [640, 480])
-left = PoseGetter(4, "left", landmarks, [640, 480])
+right = PoseGetter(3, "right", landmarks, [640, 480])
+left = PoseGetter(6, "left", landmarks, [640, 480])
 
 font_size = 0.8
 
@@ -95,7 +95,6 @@ while left.is_open() and right.is_open():
         world_coord = TestCamSys.triangulate(right_points, left_points)
         goal_angle = cal_angle(world_coord)
         print(goal_angle)
-        
         # motor_control(goal_angle)
         
         # wcs.append(world_coord)

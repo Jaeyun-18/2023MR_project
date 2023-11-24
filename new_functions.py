@@ -4,10 +4,10 @@ import numpy as np
 
 # left motor ID(up to down) - odd(1,3,5,7)
 
-def rad2six(radian_angle):
-    six_angle = (radian_angle / np.pi) * 180
+# def rad2six(radian_angle):
+#     six_angle = (radian_angle / np.pi) * 180
     
-    return six_angle    
+#     return six_angle    
 
 # def cal_LS_0N2(right_shoulder_coor, left_shoulder_coor, left_elbow_coor, left_hip_coor):  # leftNright:0 upNdown:2
 #     Shoulder_vec = left_shoulder_coor - right_shoulder_coor
@@ -58,9 +58,8 @@ def cal_LS_13(left_shoulder_coor, left_elbow_coor, left_hip_coor, right_shoulder
     if check_angle < np.pi/2:
         Theta_L *= (-1)
 
-    Theta_L = rad2six(Theta_L)
-    Phi_L = rad2six(Phi_L)
-    
+    Theta_L = Theta_L/ np.pi * 180
+    Phi_L = Phi_L / np.pi * 180
     return Theta_L, Phi_L
 
 def cal_RS_02(left_shoulder_coor, right_hip_coor, right_shoulder_coor, right_elbow_coor):  # leftNright:1 upNdown:3
@@ -94,8 +93,8 @@ def cal_RS_02(left_shoulder_coor, right_hip_coor, right_shoulder_coor, right_elb
     if check_angle > np.pi/2:
         Theta_R *= (-1)
 
-    Theta_R = rad2six(Theta_R)
-    Phi_R = rad2six(Phi_R)
+    Theta_R = Theta_R / np.pi * 180
+    Phi_R = Phi_R / np.pi * 180
 
     return Theta_R, Phi_R
 
@@ -107,15 +106,15 @@ def cal_LE_57(left_shoulder_coor,  left_elbow_coor, left_wrist_coor, right_shoul
         np.linalg.norm(left_wrist_coor - left_elbow_coor)
     Shoulder_vec = left_shoulder_coor - right_shoulder_coor
 
-    Theta_L = 180.0 - rad2six(np.arccos(np.dot(upper_arm_vector, lower_arm_vector))) # upNdown angle
+    Theta_L = 180.0 - (np.arccos(np.dot(upper_arm_vector, lower_arm_vector)))/ np.pi * 180 # upNdown angle
         
     Shoulder_cross_vec = np.cross(upper_arm_vector, Shoulder_vec) / \
         (np.linalg.norm(Shoulder_vec)*np.linalg.norm(upper_arm_vector))
     Elbow_cross_vec = np.cross(upper_arm_vector, lower_arm_vector) / \
         (np.linalg.norm(upper_arm_vector)*np.linalg.norm(lower_arm_vector))
         
-    Phi_L = rad2six((np.arccos(np.dot(Shoulder_cross_vec, Elbow_cross_vec) / \
-        (np.linalg.norm(Shoulder_cross_vec)*np.linalg.norm(Elbow_cross_vec))))) + (np.pi/2) # leftNright angle
+    Phi_L = ((np.arccos(np.dot(Shoulder_cross_vec, Elbow_cross_vec) / \
+        (np.linalg.norm(Shoulder_cross_vec)*np.linalg.norm(Elbow_cross_vec)))))/ np.pi * 180 + (np.pi/2) # leftNright angle
 
     return Theta_L, Phi_L
 
@@ -127,39 +126,39 @@ def cal_RE_46(left_shoulder_coor, right_shoulder_coor, right_elbow_coor, right_w
         np.linalg.norm(right_wrist_coor - right_elbow_coor)
     Shoulder_vec = right_shoulder_coor - left_shoulder_coor #left to right shoulder vector(x-axis)
 
-    Theta_R = rad2six(np.arccos(np.dot(upper_arm_vector, lower_arm_vector))) # upNdown angle
+    Theta_R = (np.arccos(np.dot(upper_arm_vector, lower_arm_vector)))  / np.pi * 180 # upNdown angle
     
     Shoulder_cross_vec = np.cross(Shoulder_vec,upper_arm_vector) / \
         (np.linalg.norm(Shoulder_vec)*np.linalg.norm(upper_arm_vector))
     Elbow_cross_vec = np.cross(lower_arm_vector, upper_arm_vector) / \
         (np.linalg.norm(lower_arm_vector)*np.linalg.norm(upper_arm_vector))
         
-    Phi_R = rad2six((np.arccos(np.dot(Shoulder_cross_vec, Elbow_cross_vec) / \
-        (np.linalg.norm(Shoulder_cross_vec)*np.linalg.norm(Elbow_cross_vec))))) + (np.pi/2) # leftNright angle
+    Phi_R = ((np.arccos(np.dot(Shoulder_cross_vec, Elbow_cross_vec) / \
+        (np.linalg.norm(Shoulder_cross_vec)*np.linalg.norm(Elbow_cross_vec)))))/ np.pi * 180 + (np.pi/2) # leftNright angle
 
     return Theta_R, Phi_R
 
 def trans_angle(goal_angle):
     #right arm
-    goal_angle[0][0] = goal_angle[0][0] + 170#그대로 사용
-    goal_angle[1][0] = goal_angle[1][0] - 90 + 150#가장 위 기준 0~180 -> 90~(-90)
-    goal_angle[2][0] = goal_angle[2][0]*(-1) + 150# UD_angle 차렷 자세 내린게 0
-    goal_angle[3][0] = 90.0 - goal_angle[3][0] + 150# LR_angle upper_arm 방향이 0 
+    goal_angle[0][0] = goal_angle[0][0] + 20 #그대로 사용
+    goal_angle[1][0] = goal_angle[1][0] - 90 #가장 위 기준 0~180 -> 90~(-90)
+    goal_angle[2][0] = 90 - goal_angle[2][0] # LR_angle upper_arm 방향이 0 
+    goal_angle[3][0] = goal_angle[3][0]*(-1) # UD_angle 차렷 자세 내린게 0
 
     #left arm
-    goal_angle[4][0] = goal_angle[4][0]*(-1) + 150#그대로 사용
-    goal_angle[5][0] = goal_angle[5][0] - 90.0 + 150#가장 위 기준 0~180 -> (-90)~90
-    goal_angle[6][0] = np.abs(goal_angle[6][0] - 180.0) + 150# UD_angle 차렷 자세 내린게 0
-    goal_angle[7][0] = goal_angle[7][0] - 90.0 + 150# LR_angle upper_arm 방향이 0 
-
+    goal_angle[4][0] = goal_angle[4][0]*(-1) - 20 #그대로 사용
+    goal_angle[5][0] = goal_angle[5][0] - 90 #가장 위 기준 0~180 -> (-90)~90
+    goal_angle[6][0] = goal_angle[6][0] - 90 # LR_angle upper_arm 방향이 0 
+    goal_angle[7][0] = np.abs(goal_angle[7][0] - 180) # UD_angle 차렷 자세 내린게 0
+    goal_angle = (goal_angle + 150)/300*1024
     return goal_angle
-
+    
 def cal_angle(world_coord):
     Angle_LS1, Angle_LS3 = cal_LS_13(world_coord[2], world_coord[1], world_coord[3], world_coord[5])
     Angle_RS0, Angle_RS2 = cal_RS_02(world_coord[2], world_coord[4], world_coord[5], world_coord[6])
     Angle_LE7, Angle_LE5 = cal_LE_57(world_coord[2], world_coord[1], world_coord[0], world_coord[5])
     Angle_RE6, Angle_RE4 = cal_RE_46(world_coord[2], world_coord[5], world_coord[6], world_coord[7])
-    
-    goal_angle = [[Angle_RS0],[Angle_RS2],[Angle_RE4],[Angle_RE6],[Angle_LS1],[Angle_LS3],[Angle_LE5],[Angle_LE7]]
+    goal_angle = np.array([[Angle_RS0],[Angle_RS2],[Angle_RE4],[Angle_RE6],[Angle_LS1],[Angle_LS3],[Angle_LE5],[Angle_LE7]])
     goal_angle = trans_angle(goal_angle)
+    
     return goal_angle

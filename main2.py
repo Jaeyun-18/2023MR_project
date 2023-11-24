@@ -2,7 +2,7 @@ import cv2
 from mp_handler import *
 import numpy as np
 from typing import Tuple
-import threading
+import multiprocessing
 import queue
 
 from stereo_camera import StereoCameraSystem
@@ -24,11 +24,6 @@ TestCamSys = StereoCameraSystem("right_camera", "left_camera", "cali_imgs/right_
                                 "cali_imgs/left_imgs", "cali_imgs/sync_imgs", [7, 9])
 TestCamSys.calibrate(True, "test_mtx.npz")
 
-q = queue.Queue()
-thread_motor = threading.Thread(target=mov_motor, args=(q,))
-thread_motor.daemon = True
-thread_motor.start()
-
 if __name__ == '__main__':
     pre_goal_angle = np.array([ # initial angle reset(차렷 자세)
             [0], #0
@@ -41,13 +36,18 @@ if __name__ == '__main__':
             [0]  #7
         ])
     
+    q = queue.Queue()
+    process_motor = multiprocessing.Process(target=mov_motor, args=(q,))
+    process_motor.daemon = True
+    process_motor.start()
     while left.is_open() and right.is_open():
         try:
             left_points, left_img = left.run_cycle()
             right_points, right_img = right.run_cycle()
             goal_angle = cal_angle(TestCamSys.triangulate(right_points, left_points))
             
-            if np.any(np.abs(goal_angle - pre_goal_angle) > 20):
+            if  np.any(np.abs(goal_angle - pre_goal_angle) > 20):
+                print(goal_angle)
                 q.put(goal_angle)
                 pre_goal_angle = goal_angle
             
