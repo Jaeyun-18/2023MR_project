@@ -13,7 +13,7 @@ import numpy as np
     
 #     return act_angle_list
 
-def mov_motor(q):
+def mov_motor():
         # Control table address for Dynamixel MX
     TORQUE_ENABLE_AX       = 24               # Control table address is different in Dynamixel model
     GOAL_POSITION_AX       = 30
@@ -75,34 +75,47 @@ def mov_motor(q):
         pass
 
     initial_angle_position = initial_angle.astype(int)
-    while 1:
-        if(q.empty()): pass
-        else:
-            goal_angle = q.get()
-            dxl_goal_position = goal_angle.astype(int)
-            while 1:
-                # Write Dynamixel#1 goal position
-                for ID_number in DXL_ID:
-                    dxl_comm_result, dxl_error = packetHandler.write4ByteTxRx(portHandler, ID_number, GOAL_POSITION_AX, dxl_goal_position[DXL_ID.index(ID_number)][index])
+    dxl_goal_position = goal_angle.astype(int)
+    # while 1:
+    #     if(q.empty()): pass
+    #     else:
+    #         goal_angle = q.get()
+    #         dxl_goal_position = goal_angle.astype(int)
+    #         while 1:
+    #             # Write Dynamixel#1 goal position
+    #             for ID_number in DXL_ID:
+    #                 dxl_comm_result, dxl_error = packetHandler.write4ByteTxRx(portHandler, ID_number, GOAL_POSITION_AX, dxl_goal_position[DXL_ID.index(ID_number)][index])
 
-                # while 1:
-                #     # Read Dynamixel#1 present position
-                #     for ID_number in DXL_ID:
-                #         dxl_present_position, dxl_comm_result, dxl_error = packetHandler.read4ByteTxRx(portHandler, ID_number, PRESENT_POSITION)
-                #     result = 1
+    #             # while 1:
+    #             #     # Read Dynamixel#1 present position
+    #             #     for ID_number in DXL_ID:
+    #             #         dxl_present_position, dxl_comm_result, dxl_error = packetHandler.read4ByteTxRx(portHandler, ID_number, PRESENT_POSITION)
+    #             #     result = 1
                     
-                #     for ID_number in DXL_ID: 
-                #         result=result*(abs(dxl_goal_position[DXL_ID.index(ID_number)][index] - dxl_present_position) > DXL_MOVING_STATUS_THRESHOLD)
+    #             #     for ID_number in DXL_ID: 
+    #             #         result=result*(abs(dxl_goal_position[DXL_ID.index(ID_number)][index] - dxl_present_position) > DXL_MOVING_STATUS_THRESHOLD)
 
-                #     if not result:
-                #         break
+    #             #     if not result:
+    #             #         break
                 
-                # Change goal position
-                if index == len(dxl_goal_position[0])-1:
-                    index = 0
-                    break
-                else:
-                    index +=1
+    #             # Change goal position
+    #             if index == len(dxl_goal_position[0])-1:
+    #                 index = 0
+    #                 break
+    #             else:
+    #                 index +=1
+    
+    while 1:
+        # Write Dynamixel#1 goal position
+        for ID_number in DXL_ID:
+            dxl_comm_result, dxl_error = packetHandler.write4ByteTxRx(portHandler, ID_number, GOAL_POSITION_AX, dxl_goal_position[DXL_ID.index(ID_number)][index])
+
+            # Change goal position
+        if index == len(dxl_goal_position[0])-1:
+            index = 0
+            break
+        else:
+            index +=1
 
     # Close port
     portHandler.closePort()

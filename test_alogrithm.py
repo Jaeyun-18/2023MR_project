@@ -94,13 +94,13 @@ while left.is_open() and right.is_open():
         # left.show_vid({"S1": angle0, "E1": angle1})
         world_coord = TestCamSys.triangulate(right_points, left_points)
         goal_angle = cal_angle(world_coord)
-        print(goal_angle)
+        #print(goal_angle[6][0])
         # motor_control(goal_angle)
         
-        # wcs.append(world_coord)
+        wcs.append(world_coord)
         # print(m3, m4)
-        # ms.append([m1, m2, m3, m4])
-        # times.append(time() - t0)
+        #ms.append([m1, m2, m3, m4])
+        times.append(time() - t0)
 
         right.show_vid(None)
         left.show_vid(None)
@@ -111,11 +111,11 @@ while left.is_open() and right.is_open():
     if cv2.waitKey(5) == ord('q'):
         break
 
-# plot_3d(wcs, times)
+plot_3d(wcs, times)
 
-# ms = np.array(ms)
-# ax = plt.plot(ms[:, 0])
-# ax = plt.plot(ms[:, 1])
-# ax = plt.plot(ms[:, 2])
-# ax = plt.plot(ms[:, 3])
-# plt.show()
+ms = np.array(ms)
+ax = plt.plot(ms[:, 0])
+ax = plt.plot(ms[:, 1])
+ax = plt.plot(ms[:, 2])
+ax = plt.plot(ms[:, 3])
+plt.show()
