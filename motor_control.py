@@ -16,7 +16,7 @@ PROTOCOL_VERSION           = 1.0               #  See which protocol version is 
 
 
 BAUDRATE                    = 1000000             # Dynamixel default baudrate : 57600
-DEVICENAME                  = '/dev/ttyUSB0'    # Check which port is being used on your controller
+DEVICENAME                  = 'COM8'    # Check which port is being used on your controller
                                                 # ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
 
 TORQUE_ENABLE               = 1                 # Value for enabling the torque
@@ -24,6 +24,27 @@ TORQUE_DISABLE              = 0                 # Value for disabling the torque
 DXL_MOVING_STATUS_THRESHOLD = 10               # Dynamixel MX moving status threshold
 
 index = 0
+
+def angle(value):
+    return (value+150)/300*1024
+
+def translator(angle_list,act_angle_list,DXL_ID):
+    for i in range(len(DXL_ID)):
+        act_angle_list.append([])
+        for j in angle_list[i]:
+            act_angle_list[-1].append(math.floor(angle(j)))    
+    
+    return act_angle_list
+
+# Initialize PortHandler instance
+# Set the port paths
+# Get methods and members of PortHandlerLinux or PortHandlerWindows
+portHandler = PortHandler(DEVICENAME)
+
+# Initialize PacketHandler instance
+# Set the protocol version
+# Get methods and members of Protocol1PacketHandler or Protocol2PacketHandler
+packetHandler = PacketHandler(PROTOCOL_VERSION)
 
 goal_angle = [ # initial angle reset(차렷 자세)
         [0], #0
@@ -47,60 +68,19 @@ initial_angle=[ # initial angle reset(차렷 자세)
         [0]  #7
     ]
 
-def angle(value):
-    return (value+150)/300*1024
+DXL_ID= [0,2,4,6,1,3,5,7] # right - even, left - odd
 
-def translator(angle_list,act_angle_list,DXL_ID):
-    for i in range(len(DXL_ID)):
-        act_angle_list.append([])
-        for j in angle_list[i]:
-            act_angle_list[-1].append(math.floor(angle(j)))    
-    
-    return act_angle_list
-
-def getch():
-    return msvcrt.getch().decode()
+initial_angle_position = []
+initial_angle_position = translator(initial_angle, initial_angle_position, DXL_ID)
 
 def mov_motor(q):
-    DXL_ID= [0,2,4,6,1,3,5,7] # right - even, left - odd
-    if(q.empty()): pass
-    else: goal_angle=q.get()
+    while 1:        
+        if(q.empty()): pass
+        else: goal_angle=q.get()
 
-    initial_angle_position = []
-    initial_angle_position = translator(initial_angle, initial_angle_position, DXL_ID)
+        dxl_goal_position = []
+        dxl_goal_position = translator(goal_angle, dxl_goal_position, DXL_ID)
 
-    dxl_goal_position = []
-    dxl_goal_position = translator(goal_angle, dxl_goal_position, DXL_ID)
-    
-    # Initialize PortHandler instance
-    # Set the port paths
-    # Get methods and members of PortHandlerLinux or PortHandlerWindows
-    portHandler = PortHandler(DEVICENAME)
-
-    # Initialize PacketHandler instance
-    # Set the protocol version
-    # Get methods and members of Protocol1PacketHandler or Protocol2PacketHandler
-    packetHandler = PacketHandler(PROTOCOL_VERSION)
-    # Enable Dynamixel#1 Torque
-    for ID_number in DXL_ID:
-        dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, ID_number, TORQUE_ENABLE_AX, TORQUE_ENABLE)
-        if dxl_comm_result != COMM_SUCCESS:
-            print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
-        elif dxl_error != 0:
-            print("%s" % packetHandler.getRxPacketError(dxl_error))
-        else:
-            print("Dynamixel#%d has been successfully connected" % ID_number)
-
-    # interval=25
-    # scale=3
-
-    while 1:
-        print("Press any key to continue! (or press ESC to quit!)")
-        inputKey=getch()
-        if inputKey == chr(0x1b): # 0x1b = "esc"
-            break
-        elif inputKey=='r': #press key 'r' angle return to initial position
-            dxl_goal_position = initial_angle_position # angle reset as initial position
         for ID_number in range(4):
             if(dxl_goal_position[ID_number][0]>1023):
                 dxl_goal_position[ID_number][0]=1023
@@ -151,8 +131,7 @@ def mov_motor(q):
                 index = 0
                 break
             else:
-                index +=1  
-
+                index +=1
 
     # Disable Dynamixel#1 Torque
     for ID_number in DXL_ID:
@@ -161,7 +140,6 @@ def mov_motor(q):
             print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
             print("%s" % packetHandler.getRxPacketError(dxl_error))
-
 
     # Close port
     portHandler.closePort()

@@ -32,7 +32,7 @@ PROTOCOL_VERSION           = 1.0               #  See which protocol version is 
 
 
 BAUDRATE                    = 1000000             # Dynamixel default baudrate : 57600
-DEVICENAME                  = '/dev/ttyUSB0'    # Check which port is being used on your controller
+DEVICENAME                  = 'COM8'    # Check which port is being used on your controller
                                                 # ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
 
 TORQUE_ENABLE               = 1                 # Value for enabling the torque
@@ -74,12 +74,6 @@ initial_angle=[ # initial angle reset(차렷 자세)
         [0], #5 # left arm
         [0]  #7
     ]
-
-initial_angle_position = []
-initial_angle_position = translator(initial_angle, initial_angle_position)
-
-dxl_goal_position = []
-dxl_goal_position = translator(goal_angle, dxl_goal_position)
 
 # Initialize PortHandler instance
 # Set the port paths
@@ -124,12 +118,26 @@ for ID_number in DXL_ID:
 # scale=3
 
 while 1:
+    initial_angle_position = []
+    initial_angle_position = translator(initial_angle, initial_angle_position)
+
+    dxl_goal_position = []
+    dxl_goal_position = translator(goal_angle, dxl_goal_position)
+
     print("Press any key to continue! (or press ESC to quit!)")
     inputKey=getch()
     if inputKey == chr(0x1b): # 0x1b = "esc"
         break
     elif inputKey=='r': #press key 'r' angle return to initial position
         dxl_goal_position = initial_angle_position # angle reset as initial position
+    elif inputKey=='a':
+        goal_angle[0][0] += 10
+        dxl_goal_position = []
+        dxl_goal_position = translator(goal_angle, dxl_goal_position)
+    elif inputKey=='s':
+        goal_angle[0][0] -= 10
+        dxl_goal_position = []
+        dxl_goal_position = translator(goal_angle, dxl_goal_position)
     for ID_number in range(4):
         if(dxl_goal_position[ID_number][0]>1023):
             dxl_goal_position[ID_number][0]=1023
@@ -193,4 +201,4 @@ for ID_number in DXL_ID:
 
 
 # Close port
-portHandler.closePort()
+portHandler.closePort() 

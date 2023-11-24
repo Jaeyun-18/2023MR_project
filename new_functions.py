@@ -161,6 +161,6 @@ def cal_angle(world_coord):
     Angle_RE4, Angle_RE6 = cal_RE_46(world_coord[2], world_coord[5], world_coord[6], world_coord[7])
     
     goal_angle = [[Angle_RS0],[Angle_RS2],[Angle_RE4],[Angle_RE6],[Angle_LS1],[Angle_LS3],[Angle_LE5],[Angle_LE7]]
-    # goal_angle = trans_angle(goal_angle)
+    goal_angle = trans_angle(goal_angle)
     
     return goal_angle
