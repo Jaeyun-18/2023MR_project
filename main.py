@@ -2,6 +2,7 @@ import cv2
 from mp_handler import *
 import numpy as np
 from typing import Tuple
+import thread
 
 from stereo_camera import StereoCameraSystem
 import matplotlib.pyplot as plt
@@ -9,7 +10,6 @@ from mpl_toolkits.mplot3d import Axes3D
 from time import time
 from graph_plot import plot_3d
 from new_functions import *
-import threading
 
 landmarks = landmark_translate(
     True, ["W1", "E1", "S1", "H1", "H2", "S2", "E2", "W2"])
