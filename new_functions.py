@@ -141,26 +141,25 @@ def cal_RE_46(left_shoulder_coor, right_shoulder_coor, right_elbow_coor, right_w
 
 def trans_angle(goal_angle):
     #right arm
-    goal_angle[0][0] = goal_angle[0][0] #그대로 사용
-    goal_angle[1][0] = goal_angle[1][0]*(-1) + 90.0 #가장 위 기준 0~180 -> 90~(-90)
-    goal_angle[2][0] = goal_angle[2][0] # UD_angle 차렷 자세 내린게 0
-    goal_angle[3][0] = 90.0 - goal_angle[3][0] # LR_angle upper_arm 방향이 0 
+    goal_angle[0][0] = goal_angle[0][0] + 170#그대로 사용
+    goal_angle[1][0] = goal_angle[1][0] - 90 + 150#가장 위 기준 0~180 -> 90~(-90)
+    goal_angle[2][0] = goal_angle[2][0]*(-1) + 150# UD_angle 차렷 자세 내린게 0
+    goal_angle[3][0] = 90.0 - goal_angle[3][0] + 150# LR_angle upper_arm 방향이 0 
 
     #left arm
-    goal_angle[4][0] = goal_angle[4][0] #그대로 사용
-    goal_angle[5][0] = goal_angle[5][0] - 90.0 #가장 위 기준 0~180 -> (-90)~90
-    goal_angle[6][0] = np.abs(goal_angle[6][0] - 180.0) # UD_angle 차렷 자세 내린게 0
-    goal_angle[7][0] = goal_angle[7][0] - 90.0 # LR_angle upper_arm 방향이 0 
+    goal_angle[4][0] = goal_angle[4][0]*(-1) + 150#그대로 사용
+    goal_angle[5][0] = goal_angle[5][0] - 90.0 + 150#가장 위 기준 0~180 -> (-90)~90
+    goal_angle[6][0] = np.abs(goal_angle[6][0] - 180.0) + 150# UD_angle 차렷 자세 내린게 0
+    goal_angle[7][0] = goal_angle[7][0] - 90.0 + 150# LR_angle upper_arm 방향이 0 
 
     return goal_angle
 
 def cal_angle(world_coord):
     Angle_LS1, Angle_LS3 = cal_LS_13(world_coord[2], world_coord[1], world_coord[3], world_coord[5])
     Angle_RS0, Angle_RS2 = cal_RS_02(world_coord[2], world_coord[4], world_coord[5], world_coord[6])
-    Angle_LE5, Angle_LE7 = cal_LE_57(world_coord[2], world_coord[1], world_coord[0], world_coord[5])
-    Angle_RE4, Angle_RE6 = cal_RE_46(world_coord[2], world_coord[5], world_coord[6], world_coord[7])
+    Angle_LE7, Angle_LE5 = cal_LE_57(world_coord[2], world_coord[1], world_coord[0], world_coord[5])
+    Angle_RE6, Angle_RE4 = cal_RE_46(world_coord[2], world_coord[5], world_coord[6], world_coord[7])
     
     goal_angle = [[Angle_RS0],[Angle_RS2],[Angle_RE4],[Angle_RE6],[Angle_LS1],[Angle_LS3],[Angle_LE5],[Angle_LE7]]
     goal_angle = trans_angle(goal_angle)
-    
     return goal_angle
