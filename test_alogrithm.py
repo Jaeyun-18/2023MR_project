@@ -70,7 +70,7 @@ TestCamSys.calibrate(True, "test_mtx.npz")
 
 wcs = []
 times = []
-t0 = time.time()
+t0 = time()
 ms = []
 
 print(left.is_open())
@@ -94,7 +94,7 @@ while left.is_open() and right.is_open():
         # left.show_vid({"S1": angle0, "E1": angle1})
         world_coord = TestCamSys.triangulate(right_points, left_points)
         goal_angle = cal_angle(world_coord)
-        print(goal_angle)
+        print(goal_angle[2], goal_angle[3], goal_angle[6], goal_angle[7])
         
         # motor_control(goal_angle)
         

@@ -107,7 +107,7 @@ def cal_LE_57(left_shoulder_coor,  left_elbow_coor, left_wrist_coor, right_shoul
         np.linalg.norm(left_wrist_coor - left_elbow_coor)
     Shoulder_vec = left_shoulder_coor - right_shoulder_coor
 
-    Theta_L = rad2six(np.arccos(np.dot(upper_arm_vector, lower_arm_vector))) # upNdown angle
+    Theta_L = 180.0 - rad2six(np.arccos(np.dot(upper_arm_vector, lower_arm_vector))) # upNdown angle
         
     Shoulder_cross_vec = np.cross(upper_arm_vector, Shoulder_vec) / \
         (np.linalg.norm(Shoulder_vec)*np.linalg.norm(upper_arm_vector))
@@ -142,15 +142,15 @@ def cal_RE_46(left_shoulder_coor, right_hip_coor, right_shoulder_coor, right_elb
 def trans_angle(goal_angle):
     #right arm
     goal_angle[0][0] = goal_angle[0][0] #그대로 사용
-    goal_angle[0][1] = goal_angle[0][1]*(-1) + 90 #가장 위 기준 0~180 -> 90~(-90)
-    goal_angle[0][2] = goal_angle[0][2]
-    goal_angle[0][3] = goal_angle[0][3] 
+    goal_angle[0][1] = goal_angle[0][1]*(-1) + 90.0 #가장 위 기준 0~180 -> 90~(-90)
+    goal_angle[0][2] = np.abs(goal_angle[0][2] - 180.0) # UD_angle 차렷 자세 내린게 0
+    goal_angle[0][3] = 90.0 - goal_angle[0][3] # LR_angle upper_arm 방향이 0 
 
     #left arm
     goal_angle[0][4] = goal_angle[0][4] #그대로 사용
-    goal_angle[0][5] = goal_angle[0][5] - 90 #가장 위 기준 0~180 -> (-90)~90
-    goal_angle[0][6] = goal_angle[0][6]
-    goal_angle[0][7] = goal_angle[0][7]
+    goal_angle[0][5] = goal_angle[0][5] - 90.0 #가장 위 기준 0~180 -> (-90)~90
+    goal_angle[0][6] = np.abs(goal_angle[0][6] - 180.0) # UD_angle 차렷 자세 내린게 0
+    goal_angle[0][7] = goal_angle[0][7] - 90.0 # LR_angle upper_arm 방향이 0 
 
     return goal_angle
 
@@ -161,6 +161,6 @@ def cal_angle(world_coord):
     Angle_RE4, Angle_RE6 = cal_RE_46(world_coord[2], world_coord[4], world_coord[5], world_coord[6], world_coord[7])
     
     goal_angle = [[Angle_RS0],[Angle_RS2],[Angle_RE4],[Angle_RE6],[Angle_LS1],[Angle_LS3],[Angle_LE5],[Angle_LE7]]
-    goal_angle = trans_angle(goal_angle)
+    #goal_angle = trans_angle(goal_angle)
     
     return goal_angle
