@@ -3,27 +3,6 @@ import math
 import queue
 from dynamixel_sdk import *                    # Uses Dynamixel SDK library
 
-goal_angle = [ # initial angle reset(차렷 자세)
-        [0], #0
-        [-90], #2 # right arm 
-        [0], #4
-        [0], #6
-        [0], #1
-        [90], #3
-        [0], #5 # left arm
-        [0]  #7
-    ]
-
-initial_angle=[ # initial angle reset(차렷 자세)
-        [0], #0
-        [-90], #2 # right arm 
-        [0], #4
-        [0], #6
-        [0], #1
-        [90], #3
-        [0], #5 # left arm
-        [0]  #7
-    ]
 if os.name == 'nt':
     import msvcrt
     def getch():
