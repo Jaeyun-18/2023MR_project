@@ -119,10 +119,10 @@ def cal_LE_57(left_shoulder_coor,  left_elbow_coor, left_wrist_coor, right_shoul
 
     return Theta_L, Phi_L
 
-def cal_RE_46(left_shoulder_coor, right_hip_coor, right_shoulder_coor, right_elbow_coor, right_wrist_coor):  # upNdown 5, leftNright 7
+def cal_RE_46(left_shoulder_coor, right_shoulder_coor, right_elbow_coor, right_wrist_coor):  # upNdown 5, leftNright 7
 
-    upper_arm_vector = (right_elbow_coor - left_shoulder_coor) / \
-        np.linalg.norm(right_elbow_coor-left_shoulder_coor)
+    upper_arm_vector = (right_elbow_coor - right_shoulder_coor) / \
+        np.linalg.norm(right_elbow_coor-right_shoulder_coor)
     lower_arm_vector = (right_wrist_coor - right_elbow_coor) / \
         np.linalg.norm(right_wrist_coor - right_elbow_coor)
     Shoulder_vec = right_shoulder_coor - left_shoulder_coor #left to right shoulder vector(x-axis)
@@ -158,7 +158,7 @@ def cal_angle(world_coord):
     Angle_LS1, Angle_LS3 = cal_LS_13(world_coord[2], world_coord[1], world_coord[3], world_coord[5])
     Angle_RS0, Angle_RS2 = cal_RS_02(world_coord[2], world_coord[4], world_coord[5], world_coord[6])
     Angle_LE5, Angle_LE7 = cal_LE_57(world_coord[2], world_coord[1], world_coord[0], world_coord[5])
-    Angle_RE4, Angle_RE6 = cal_RE_46(world_coord[2], world_coord[4], world_coord[5], world_coord[6], world_coord[7])
+    Angle_RE4, Angle_RE6 = cal_RE_46(world_coord[2], world_coord[5], world_coord[6], world_coord[7])
     
     goal_angle = [[Angle_RS0],[Angle_RS2],[Angle_RE4],[Angle_RE6],[Angle_LS1],[Angle_LS3],[Angle_LE5],[Angle_LE7]]
     # goal_angle = trans_angle(goal_angle)

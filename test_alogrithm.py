@@ -112,11 +112,11 @@ while left.is_open() and right.is_open():
     if cv2.waitKey(5) == ord('q'):
         break
 
-plot_3d(wcs, times)
+# plot_3d(wcs, times)
 
-ms = np.array(ms)
-ax = plt.plot(ms[:, 0])
-ax = plt.plot(ms[:, 1])
-ax = plt.plot(ms[:, 2])
-ax = plt.plot(ms[:, 3])
-plt.show()
+# ms = np.array(ms)
+# ax = plt.plot(ms[:, 0])
+# ax = plt.plot(ms[:, 1])
+# ax = plt.plot(ms[:, 2])
+# ax = plt.plot(ms[:, 3])
+# plt.show()
