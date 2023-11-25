@@ -16,8 +16,8 @@ landmarks = landmark_translate(
     True, ["W1", "E1", "S1", "H1", "H2", "S2", "E2", "W2"])
           # 0     1     2     3     4     5     6     7
 
-right = PoseGetter(3, "right", landmarks, [640, 480])
-left = PoseGetter(6, "left", landmarks, [640, 480])
+right = PoseGetter(4, "right", landmarks, [640, 480])
+left = PoseGetter(2, "left", landmarks, [640, 480])
 
 font_size = 0.8
 
@@ -33,6 +33,7 @@ TestCamSys.calibrate(True, "test_mtx.npz")
 TORQUE_ENABLE_AX       = 24               # Control table address is different in Dynamixel model
 GOAL_POSITION_AX       = 30
 PRESENT_POSITION       = 36
+TORQUE_LIMIT           = 34
 
 # Protocol version
 PROTOCOL_VERSION           = 1.0               #  See which protocol version is used in the Dynamixel
@@ -88,6 +89,8 @@ if portHandler.openPort():
 if portHandler.setBaudRate(BAUDRATE):
     pass
 
+
+
 initial_angle_position = initial_angle.astype(int)
 while left.is_open() and right.is_open():
     try:
@@ -101,6 +104,7 @@ while left.is_open() and right.is_open():
         
         dxl_goal_position = goal_angle.astype(int)
         for ID_number in DXL_ID:
+            r, e = packetHandler.write4ByteTxRx(portHandler, ID_number, TORQUE_LIMIT, 100)
             dxl_comm_result, dxl_error = packetHandler.write4ByteTxRx(portHandler, ID_number, GOAL_POSITION_AX, dxl_goal_position[DXL_ID.index(ID_number)][index])
 
             # Change goal position
