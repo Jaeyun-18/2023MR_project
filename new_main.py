@@ -4,10 +4,8 @@ import numpy as np
 from typing import Tuple
 import threading
 import queue
-import os
-
-os.sys.path.append('../DynamixelSDK/python/build')
 from dynamixel_sdk import *
+import ctypes
 
 from stereo_camera import StereoCameraSystem
 import matplotlib.pyplot as plt
@@ -19,8 +17,8 @@ landmarks = landmark_translate(
     True, ["W1", "E1", "S1", "H1", "H2", "S2", "E2", "W2"])
 # 0     1     2     3     4     5     6     7
 
-right = PoseGetter(6, "right", landmarks, [640, 480])
-left = PoseGetter(4, "left", landmarks, [640, 480])
+right = PoseGetter(4, "right", landmarks, [640, 480])
+left = PoseGetter(6, "left", landmarks, [640, 480])
 
 font_size = 0.8
 
@@ -87,6 +85,8 @@ portHandler = PortHandler(DEVICENAME)
 # Set the protocol version
 # Get methods and members of Protocol1PacketHandler or Protocol2PacketHandler
 packetHandler = PacketHandler(PROTOCOL_VERSION)
+groupSyncWrite = GroupSyncWrite(portHandler, packetHandler, GOAL_POSITION_AX, 2)
+
 
 if portHandler.openPort():
     pass
@@ -112,11 +112,19 @@ while left.is_open() and right.is_open():
         #     pre_goal_angle = goal_angle
 
         dxl_goal_position = goal_angle.astype(int)
+        
         for ID_number in DXL_ID:
-            dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(
-                portHandler, ID_number, GOAL_POSITION_AX, dxl_goal_position[DXL_ID.index(ID_number)][index])
+            num = dxl_goal_position[DXL_ID.index(ID_number)][index]
+            if ID_number == 1: 
+                num = 1024 - num -100
+            elif ID_number == 0:
+                num = 1024 - num +100
 
+            param_goal_position = [DXL_LOBYTE(DXL_LOWORD(num)), DXL_HIBYTE(DXL_LOWORD(num))]
+            dxl_addparam_result = groupSyncWrite.addParam(ID_number, param_goal_position)
             # Change goal position
+        groupSyncWrite.txPacket()
+        groupSyncWrite.clearParam()
 
         right.show_vid(None)
         left.show_vid(None)

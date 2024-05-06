@@ -141,12 +141,17 @@ class StereoCameraSystem:
         # coordinates of the checkerboard in checkerboard world space.
         objpoints = []  # 3d point in real world space
 
+        print("============", len(c1_images))
+        i = 0
+        
         for frame1, frame2 in zip(c1_images, c2_images):
             size = (self.ROWS, self.COLUMNS)
             gray1 = cv.cvtColor(frame1, cv.COLOR_BGR2GRAY)
             gray2 = cv.cvtColor(frame2, cv.COLOR_BGR2GRAY)
             c_ret1, corners1 = cv.findChessboardCorners(gray1, size, None)
             c_ret2, corners2 = cv.findChessboardCorners(gray2, size, None)
+            print("============", i, c_ret1, c_ret2)
+            i += 1
 
             if c_ret1 == True and c_ret2 == True:
                 corners1 = cv.cornerSubPix(
@@ -167,9 +172,6 @@ class StereoCameraSystem:
 
                     cv.drawChessboardCorners(frame2, size, corners2, c_ret2)
                     cv.imshow(self.img2_name, frame2)
-
-                if cv.waitKey(500) == ord('n'):
-                    pass
 
                 objpoints.append(objp)
                 imgpoints_left.append(corners1)
